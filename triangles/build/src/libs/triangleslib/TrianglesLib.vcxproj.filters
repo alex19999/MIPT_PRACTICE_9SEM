@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\mwx5324211\MIPT_PRACTICE_9SEM\triangles\src\libs\triangleslib\triangles\Triangles.cpp">
+      <Filter>src\libs\triangleslib\triangles</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\mwx5324211\MIPT_PRACTICE_9SEM\triangles\src\libs\triangleslib\triangles\Triangles.h">
+      <Filter>src\libs\triangleslib\triangles</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\mwx5324211\MIPT_PRACTICE_9SEM\triangles\src\libs\triangleslib\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{464060AA-DBE0-3217-8419-2BA6AAB67EE3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\libs">
+      <UniqueIdentifier>{C4203818-1CF1-3F8E-B805-92C75C51E54F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\libs\triangleslib">
+      <UniqueIdentifier>{70926D3C-3B73-3C6E-B4E6-7E28C39F54ED}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\libs\triangleslib\triangles">
+      <UniqueIdentifier>{5F917BDA-2BDE-3F05-B589-538B45BF076C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
