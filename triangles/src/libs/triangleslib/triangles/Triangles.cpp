@@ -61,10 +61,16 @@ namespace triangles
     {
     }
 
+    float Plane::getDistanceToPoint(const Point& p) const
+    {
+        return (dotProduct(normal, Vector{p}) + D) / normal.getLength();
+    }
+
     Triangle::Triangle(Point vert1, Point vert2, Point vert3)
     : vertice1(vert1)
     , vertice2(vert2)
     , vertice3(vert3)
+    , trianglePlane(Plane(vert1, vert2, vert3))
     {
         // Check that not lying on the same line
         if (isLyingOnSameLine(vertice1, vertice2) && isLyingOnSameLine(vertice2, vertice3))

@@ -70,16 +70,45 @@ TEST(TestVector, DotProductUnit)
 
 TEST(TestPlane, PlaneBuildingUnit)
 {   
-    const triangles::Point point1 { 1.0, 0.0, 0.0 };
-    const triangles::Point point2 { 0.0, 1.0, 0.0 };
-    const triangles::Point point3 { 0.0, 0.0, 1.0 };
+    const triangles::Point point11 { 1.0, 0.0, 0.0 };
+    const triangles::Point point12 { 0.0, 1.0, 0.0 };
+    const triangles::Point point13 { 0.0, 0.0, 1.0 };
     
-    const triangles::Plane simplePlane{ point1, point2, point3 };
+    const triangles::Plane simplePlane{ point11, point12, point13 };
 
     EXPECT_EQ(simplePlane.getNormal()[0], 1.0);
     EXPECT_EQ(simplePlane.getNormal()[1], 1.0);
     EXPECT_EQ(simplePlane.getNormal()[2], 1.0);
     EXPECT_EQ(simplePlane.getD(), -1.0);
+
+    const triangles::Point point21 { 1.0, 2.0, 3.0 };
+    const triangles::Point point22 { 2.0, 2.0, 2.0 };
+    const triangles::Point point23 { 31.0, -28.0, -11.0 };
+    
+    const triangles::Plane plane{ point21, point22, point23 };
+
+    EXPECT_EQ(plane.getNormal()[0], -30.0);
+    EXPECT_EQ(plane.getNormal()[1], -16.0);
+    EXPECT_EQ(plane.getNormal()[2], -30.0);
+    EXPECT_EQ(plane.getD(), 152.0);
+}
+
+TEST(TestPlane, DistanceToPointUnit)
+{
+    constexpr double eps = 1.0e-6;
+    const triangles::Point point1 { 1.0, -12.0, 3.0 };
+    const triangles::Point point2 { 11.0, 128.0, 23.0 };
+    const triangles::Point point3 { -1.0, -2.0, 11.0 };
+    
+    const triangles::Plane plane{ point1, point2, point3 };
+    
+    const triangles::Point testPoint1{ 0.0, 0.0, 0.0 };
+    const triangles::Point testPoint2{ 1.0, 2.0, 3.0 };
+    const triangles::Point testPoint3{ -3.0, 2.0, -1.0 };
+
+    EXPECT_NEAR(plane.getDistanceToPoint(testPoint1), -3.4909353369064853, eps);
+    EXPECT_NEAR(plane.getDistanceToPoint(testPoint2), -1.675648961715113, eps);
+    EXPECT_NEAR(plane.getDistanceToPoint(testPoint3), -6.8621814622618915, eps);
 }
 
 TEST(TestVector, IncorrectTrianglesUnit)

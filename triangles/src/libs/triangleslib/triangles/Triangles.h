@@ -65,6 +65,9 @@ namespace triangles
         // Getters
         float getD() const { return D; };
         std::vector<float> getNormal() const { return std::vector<float>{ normal.getA(), normal.getB(), normal.getC() }; }
+
+        // Calculate distance to particular point
+        float getDistanceToPoint(const Point& p) const;
     };
 
     class Triangle
@@ -73,13 +76,16 @@ namespace triangles
         Point vertice2;
         Point vertice3;
 
+        Plane trianglePlane;
+
     public:
         Triangle(Point vert1, Point vert2, Point vert3);
 
-        // Only getters with returning const& - after creating
-        // triangle cannot be modified
+        // Only getters
         const Point& getVertice1() const { return vertice1; }
         const Point& getVertice2() const { return vertice2; }
         const Point& getVertice3() const { return vertice3; }
+
+        const Plane& getPlane() const { return trianglePlane; }
     };
 }
