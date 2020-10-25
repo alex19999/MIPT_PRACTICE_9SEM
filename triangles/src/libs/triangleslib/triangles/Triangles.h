@@ -22,7 +22,8 @@ namespace triangles
         void setZ(float z_) { z = z_; }
     };
 
-    float distance(const Point& p1, const Point& p2);
+    bool isLyingOnSameLine(const Point& p1, const Point& p2, const float eps = 0.0000001);
+    float getDistance(const Point& p1, const Point& p2);
 
     class Triangle
     {
@@ -32,5 +33,11 @@ namespace triangles
 
     public:
         Triangle(Point vert1, Point vert2, Point vert3);
+
+        // Only getters with returning const& - after creating
+        // triangle cannot be modified
+        const Point& getVertice1() const { return vertice1; }
+        const Point& getVertice2() const { return vertice2; }
+        const Point& getVertice3() const { return vertice3; }
     };
 }

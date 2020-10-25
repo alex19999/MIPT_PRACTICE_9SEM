@@ -10,7 +10,14 @@ namespace triangles
     {
     }
 
-    float distance(const Point& p1, const Point& p2)
+    bool isLyingOnSameLine(const Point& p1, const Point& p2, const float eps)
+    {
+        return (std::abs(p1.getX() - p2.getX()) < eps && std::abs(p1.getY() - p2.getY()) < eps)
+            || (std::abs(p1.getY() - p2.getY()) < eps && std::abs(p1.getZ() - p2.getZ()) < eps)
+            || (std::abs(p1.getZ() - p2.getZ()) < eps && std::abs(p1.getX() - p2.getX()) < eps);
+    }
+
+    float getDistance(const Point& p1, const Point& p2)
     {
         return std::sqrt((p1.getX() - p2.getX()) * (p1.getX() - p2.getX())
             + (p1.getY() - p2.getY()) * (p1.getY() - p2.getY())
@@ -22,11 +29,18 @@ namespace triangles
     , vertice2(vert2)
     , vertice3(vert3)
     {
-        if (distance(vertice1, vertice2) + distance(vertice1, vertice3) <= distance(vertice2, vertice3) 
-            || distance(vertice1, vertice2) + distance(vertice2, vertice3) <= distance(vertice3, vertice1)
-            || distance(vertice3, vertice1) + distance(vertice2, vertice3) <= distance(vertice1, vertice2))
+        // Check that not lying on the same line
+        if (isLyingOnSameLine(vertice1, vertice2) && isLyingOnSameLine(vertice2, vertice3))
         {
-            throw std::runtime_error("Cannot build triangle on these points");
+            throw std::runtime_error("Cannot build triangle on these points: all points are lying on same line");
+        }
+
+        // Check lengthes of edges
+        if (getDistance(vertice1, vertice2) + getDistance(vertice1, vertice3) <= getDistance(vertice2, vertice3) 
+            || getDistance(vertice1, vertice2) + getDistance(vertice2, vertice3) <= getDistance(vertice3, vertice1)
+            || getDistance(vertice3, vertice1) + getDistance(vertice2, vertice3) <= getDistance(vertice1, vertice2))
+        {
+            throw std::runtime_error("Cannot build triangle on these points: incorrect lengthes");
         }
     }
 }

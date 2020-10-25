@@ -13,9 +13,12 @@ EXPORTS
 	?__empty_global_delete@@YAXPEAXW4align_val_t@std@@@Z
 	?__empty_global_delete@@YAXPEAX_K@Z
 	?__empty_global_delete@@YAXPEAX_KW4align_val_t@std@@@Z
-	?distance@triangles@@YAMAEBVPoint@1@0@Z
+	?abs@@YAMM@Z
+	?getDistance@triangles@@YAMAEBVPoint@1@0@Z
 	?getX@Point@triangles@@QEBAMXZ
 	?getY@Point@triangles@@QEBAMXZ
 	?getZ@Point@triangles@@QEBAMXZ
+	?isLyingOnSameLine@triangles@@YA_NAEBVPoint@1@0M@Z
 	?sqrt@@YAMM@Z
 	?what@exception@std@@UEBAPEBDXZ
+	fabsf
