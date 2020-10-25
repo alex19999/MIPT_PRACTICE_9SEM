@@ -24,6 +24,43 @@ namespace triangles
             + (p1.getZ() - p2.getZ()) * (p1.getZ() - p2.getZ()));
     }
 
+    Vector::Vector(float a_, float b_, float c_)
+    : a(a_)
+    , b(b_)
+    , c(c_)
+    {
+    }
+
+    Vector::Vector(const Point& end, const Point& begin)
+    : a(end.getX() - begin.getX())
+    , b(end.getY() - begin.getY())
+    , c(end.getZ() - begin.getZ())
+    {
+    }
+
+    float Vector::getLength() const
+    {
+        return std::sqrt(a * a + b * b + c * c);
+    }
+
+    Vector operator*(const Vector& lhs, const Vector& rhs)
+    {
+        return Vector{ lhs.getB() * rhs.getC() - rhs.getB() * lhs.getC(),
+            rhs.getA() * lhs.getC() - lhs.getA() * rhs.getC(),
+            lhs.getA() * rhs.getB() - rhs.getA() * lhs.getB() };
+    }
+
+    float dotProduct(const Vector& lhs, const Vector& rhs)
+    {
+        return lhs.getA() * rhs.getA() + lhs.getB() * rhs.getB() + lhs.getC() * rhs.getC();
+    }
+
+    Plane::Plane(const Point& p1, const Point& p2, const Point& p3)
+    : normal(Vector{ p2, p1 } * Vector{ p3, p1 })
+    , D(-dotProduct(normal, Vector{ p1 }))
+    {
+    }
+
     Triangle::Triangle(Point vert1, Point vert2, Point vert3)
     : vertice1(vert1)
     , vertice2(vert2)
