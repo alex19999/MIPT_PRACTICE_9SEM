@@ -76,9 +76,9 @@ TEST(TestPlane, PlaneBuildingUnit)
     
     const triangles::Plane simplePlane{ point11, point12, point13 };
 
-    EXPECT_EQ(simplePlane.getNormal()[0], 1.0);
-    EXPECT_EQ(simplePlane.getNormal()[1], 1.0);
-    EXPECT_EQ(simplePlane.getNormal()[2], 1.0);
+    EXPECT_EQ(simplePlane.getNormal().getA(), 1.0);
+    EXPECT_EQ(simplePlane.getNormal().getB(), 1.0);
+    EXPECT_EQ(simplePlane.getNormal().getC(), 1.0);
     EXPECT_EQ(simplePlane.getD(), -1.0);
 
     const triangles::Point point21 { 1.0, 2.0, 3.0 };
@@ -87,9 +87,9 @@ TEST(TestPlane, PlaneBuildingUnit)
     
     const triangles::Plane plane{ point21, point22, point23 };
 
-    EXPECT_EQ(plane.getNormal()[0], -30.0);
-    EXPECT_EQ(plane.getNormal()[1], -16.0);
-    EXPECT_EQ(plane.getNormal()[2], -30.0);
+    EXPECT_EQ(plane.getNormal().getA(), -30.0);
+    EXPECT_EQ(plane.getNormal().getB(), -16.0);
+    EXPECT_EQ(plane.getNormal().getC(), -30.0);
     EXPECT_EQ(plane.getD(), 152.0);
 }
 
@@ -111,7 +111,7 @@ TEST(TestPlane, DistanceToPointUnit)
     EXPECT_NEAR(plane.getDistanceToPoint(testPoint3), -6.8621814622618915, eps);
 }
 
-TEST(TestVector, IncorrectTrianglesUnit)
+TEST(TestTriangle, IncorrectTrianglesUnit)
 {   
     const triangles::Point point11 { 1.0, 0.0, 0.0 };
     const triangles::Point point12 { 2.0, 0.0, 0.0 };
@@ -124,6 +124,42 @@ TEST(TestVector, IncorrectTrianglesUnit)
     const triangles::Point point23 { 18.0, 0.0, 0.0 };
     
     EXPECT_THROW(triangles::Triangle( point21, point22, point23 ), std::runtime_error);
+}
+
+TEST(TestTriangle, NoPlaneIntersectionUnit)
+{   
+    const triangles::Point point11 { 0.0, 0.0, 0.0 };
+    const triangles::Point point12 { 3.0, 0.0, 0.0 };
+    const triangles::Point point13 { 1.5, 3.0, 0.0 };
+    
+    triangles::Triangle triangle1{ point11, point12, point13 };
+
+    const triangles::Point point21 { 4.0, 0.0, 1.0 };
+    const triangles::Point point22 { 5.0, 0.0, 1.0 };
+    const triangles::Point point23 { 3.5, 0.0, 3.0 };
+    
+    triangles::Triangle triangle2{ point21, point22, point23 };
+
+    EXPECT_FALSE(triangle1.hasIntersection(triangle2));
+    EXPECT_FALSE(triangle2.hasIntersection(triangle1));
+}
+
+TEST(TestTriangle, NoTrianglesIntersectionUnit)
+{   
+    const triangles::Point point11 { 0.0, 0.0, 0.0 };
+    const triangles::Point point12 { 3.0, 0.0, 0.0 };
+    const triangles::Point point13 { 1.5, 3.0, 0.0 };
+    
+    triangles::Triangle triangle1{ point11, point12, point13 };
+
+    const triangles::Point point21 { 4.0, 1.0, -1.0 };
+    const triangles::Point point22 { 5.0, 1.0, -1.0 };
+    const triangles::Point point23 { 6.0, 1.0, 3.0 };
+    
+    triangles::Triangle triangle2{ point21, point22, point23 };
+
+    EXPECT_FALSE(triangle1.hasIntersection(triangle2));
+    EXPECT_FALSE(triangle2.hasIntersection(triangle1));
 }
 
 } // namespace UT
