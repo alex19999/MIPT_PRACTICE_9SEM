@@ -2,60 +2,9 @@
 #include <vector>
 
 // Follows http://web.stanford.edu/class/cs277/resources/papers/Moller1997b.pdf
-/*
 namespace triangles
 {
-    class Point
-    {
-        float x;
-        float y;
-        float z;
-
-    public:
-        explicit Point(float x_ = 0.0, float y_ = 0.0, float z_ = 0.0);
-
-        // Getters
-        float getX() const { return x; }
-        float getY() const { return y; }
-        float getZ() const { return z; }
-
-        // Setters
-        void setX(float x_) { x = x_; }
-        void setY(float y_) { y = y_; }
-        void setZ(float z_) { z = z_; }
-    };
-
-    bool isLyingOnSameLine(const Point& p1, const Point& p2, const float eps = 0.0000001);
-    float getDistance(const Point& p1, const Point& p2);
-
-    class Vector
-    {
-        float a;
-        float b;
-        float c;
-
-    public:
-        
-        explicit Vector(float a_ = 0.0, float b_ = 0.0, float c_ = 0.0);
-        Vector(const Point& end, const Point& begin = Point{ 0.0, 0.0, 0.0 });
-        
-        // Getters
-        float getA() const { return a; }
-        float getB() const { return b; }
-        float getC() const { return c; }
-
-        float getLength() const;
-        
-    };
-
-    // Dot Product
-    float dotProduct(const Vector& lhs, const Vector& rhs);
-
-    // Cross Product
-    Vector operator*(const Vector& lhs, const Vector& rhs);
-    
-    // Common formula: A * x + B * y + C * z + D = 0, 
-    // where n(A, B, C) - normal
+    /*
     class Plane
     {
         Vector normal;
@@ -74,6 +23,7 @@ namespace triangles
 
     float getIntervalPoint(float p1, float p2, float d1, float d2);
 
+    template <size_t Dim>
     class Triangle
     {
         Point vertice1;
@@ -83,7 +33,7 @@ namespace triangles
         Plane trianglePlane;
 
     public:
-        Triangle(Point vert1, Point vert2, Point vert3);
+        Triangle(const Point<Dim>& vert1, const<Dim>& Point vert2, const Point<Dim>& vert3);
 
         // Only getters
         const Point& getVertice1() const { return vertice1; }
@@ -94,5 +44,5 @@ namespace triangles
 
         bool hasIntersection(const Triangle& other) const;
     };
+    */
 }
-*/

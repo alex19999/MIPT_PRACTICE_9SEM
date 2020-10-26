@@ -9,12 +9,48 @@
 namespace triangles
 {
     template <size_t Dim>
+    class Point
+    {
+    
+        std::array<float, Dim> coordinates;
+
+    public:
+        explicit Point(const std::array<float, Dim>& coords);
+        // Getter
+        const float& operator[](size_t index) const { return coordinates[index]; }
+        const std::array<float, Dim>& getCoordinates() const { return coordinates; }
+    };
+
+    template <size_t Dim>
+    Point<Dim>::Point(const std::array<float, Dim>& cs)
+        : coordinates(cs)
+    {
+    }
+
+    template <size_t Dim>
+    Point<Dim> operator-(const Point<Dim>& end, const Point<Dim>& begin)
+    {
+        std::array<float, Dim> coords;
+        std::transform(end.getCoordinates().begin(), end.getCoordinates().end(), begin.getCoordinates().begin(), coords.begin(), std::minus<float>());
+        return Point { coords };
+    }
+
+    template <size_t Dim>
+    float getDistance(const Point<Dim>& p1, const Point<Dim>& p2)
+    {
+        return std::sqrt((p1[0] - p2[0]) * (p1[0] - p2[0])
+            + (p1[1] - p2[1]) * (p1[1] - p2[1])
+            + (p1[2] - p2[2]) * (p1[2] - p2[2]));
+    }
+
+    template <size_t Dim>
     class Vector
     {
         std::array<float, Dim> points;
     public:
         Vector(const std::array<float, Dim>& points);
-        
+        Vector(const Point<Dim>& end, const Point<Dim>& begin);
+
         float getLength() const;
         
         // Getters
@@ -31,6 +67,12 @@ namespace triangles
     template <size_t Dim>
     Vector<Dim>::Vector(const std::array<float, Dim>& ps)
         : points(ps)
+    {
+    }
+
+    template <size_t Dim>
+    Vector<Dim>::Vector(const Point<Dim>& end, const Point<Dim>& begin)
+        : points((end - begin).getCoordinates())
     {
     }
 
