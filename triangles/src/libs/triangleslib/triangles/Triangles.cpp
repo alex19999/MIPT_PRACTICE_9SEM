@@ -1,112 +1,120 @@
 #include <cmath>
 #include <array>
 #include "Triangles.h"
-/*
+
+namespace
+{
+    bool checkAllZeroes(std::array<float, 3> pointsToCheck)
+    {
+        constexpr float eps = 1.0e-6f;
+        for (size_t i = 0; i < 3; ++i)
+        {
+            if (std::abs(pointsToCheck[i]) > eps)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    float getIntervalPoint(float p1, float p2, float d1, float d2)
+    {
+        float point = 0.0;
+        if (p1 >= p2)
+        {
+            point = p2;
+            if (d2 > d1)
+            {
+                point += (p1 - p2) * d2 / (d2 - d1);
+            } 
+            else
+            {
+                point += (p1 - p2) * d1 / (d1 - d2);
+            }
+        }
+        else
+        {
+            point = p1;
+            if (d2 > d1)
+            {
+                point += (p2 - p1) * d2 / (d2 - d1);
+            } 
+            else
+            {
+                point += (p2 - p1) * d1 / (d1 - d2);
+            }
+        }
+        return point;
+    }
+}
+
 namespace triangles
 {
-    Point::Point(float x_, float y_, float z_)
-    : x(x_)
-    , y(y_)
-    , z(z_)
+    bool edgeIntersect(const Segment<2>& lhs, const Segment<2>& rhs)
     {
+        return true;
     }
 
-    bool isLyingOnSameLine(const Point& p1, const Point& p2, const float eps)
+    bool haveIntersection(const Triangle<2>& lhs, const Triangle<2>& rhs)
     {
-        return (std::abs(p1.getX() - p2.getX()) < eps && std::abs(p1.getY() - p2.getY()) < eps)
-            || (std::abs(p1.getY() - p2.getY()) < eps && std::abs(p1.getZ() - p2.getZ()) < eps)
-            || (std::abs(p1.getZ() - p2.getZ()) < eps && std::abs(p1.getX() - p2.getX()) < eps);
-    }
-
-    float getDistance(const Point& p1, const Point& p2)
-    {
-        return std::sqrt((p1.getX() - p2.getX()) * (p1.getX() - p2.getX())
-            + (p1.getY() - p2.getY()) * (p1.getY() - p2.getY())
-            + (p1.getZ() - p2.getZ()) * (p1.getZ() - p2.getZ()));
-    }
-
-    Vector::Vector(float a_, float b_, float c_)
-    : a(a_)
-    , b(b_)
-    , c(c_)
-    {
-    }
-
-    Vector::Vector(const Point& end, const Point& begin)
-    : a(end.getX() - begin.getX())
-    , b(end.getY() - begin.getY())
-    , c(end.getZ() - begin.getZ())
-    {
-    }
-
-    float Vector::getLength() const
-    {
-        return std::sqrt(a * a + b * b + c * c);
-    }
-
-    Vector operator*(const Vector& lhs, const Vector& rhs)
-    {
-        return Vector{ lhs.getB() * rhs.getC() - rhs.getB() * lhs.getC(),
-            rhs.getA() * lhs.getC() - lhs.getA() * rhs.getC(),
-            lhs.getA() * rhs.getB() - rhs.getA() * lhs.getB() };
-    }
-
-    float dotProduct(const Vector& lhs, const Vector& rhs)
-    {
-        return lhs.getA() * rhs.getA() + lhs.getB() * rhs.getB() + lhs.getC() * rhs.getC();
-    }
-
-    Plane::Plane(const Point& p1, const Point& p2, const Point& p3)
-    : normal(Vector{ p2, p1 } * Vector{ p3, p1 })
-    , D(-dotProduct(normal, Vector{ p1 }))
-    {
-    }
-
-    float Plane::getDistanceToPoint(const Point& p) const
-    {
-        return (dotProduct(normal, Vector{p}) + D) / normal.getLength();
-    }
-
-    Triangle::Triangle(Point vert1, Point vert2, Point vert3)
-    : vertice1(vert1)
-    , vertice2(vert2)
-    , vertice3(vert3)
-    , trianglePlane(Plane(vert1, vert2, vert3))
-    {
-        // Check that not lying on the same line
-        if (isLyingOnSameLine(vertice1, vertice2) && isLyingOnSameLine(vertice2, vertice3))
+        // Check edges intersection
+        for (size_t i = 0; i < lhs.getEdges().size(); ++i)
         {
-            throw std::runtime_error("Cannot build triangle on these points: all points are lying on same line");
+            for (size_t j = 0; j <  rhs.getEdges().size(); ++j)
+            {
+                if(edgeIntersect(lhs.getEdges()[i], rhs.getEdges()[j]))
+                {
+                    return true;
+                }
+            }
         }
-
-        // Check lengthes of edges
-        if (getDistance(vertice1, vertice2) + getDistance(vertice1, vertice3) <= getDistance(vertice2, vertice3) 
-            || getDistance(vertice1, vertice2) + getDistance(vertice2, vertice3) <= getDistance(vertice3, vertice1)
-            || getDistance(vertice3, vertice1) + getDistance(vertice2, vertice3) <= getDistance(vertice1, vertice2))
-        {
-            throw std::runtime_error("Cannot build triangle on these points: incorrect lengthes");
-        }
+        return false;
     }
 
-    bool Triangle::hasIntersection(const Triangle& other) const
+    Plane getPlane(const Triangle<3>& triangle)
     {
-        std::array<float, 3> distancesToOtherPoints{ trianglePlane.getDistanceToPoint(other.getVertice1()), 
-            trianglePlane.getDistanceToPoint(other.getVertice2()), trianglePlane.getDistanceToPoint(other.getVertice3()) };
-        if ((distancesToOtherPoints[0] > 0 && distancesToOtherPoints[1] > 0 && distancesToOtherPoints[2] > 0)
-            || (distancesToOtherPoints[0] < 0 && distancesToOtherPoints[1] < 0 && distancesToOtherPoints[2] < 0))
+        const auto normal = Vector<3>(triangle.getVertices()[1], triangle.getVertices()[0]) * Vector<3>(triangle.getVertices()[2], triangle.getVertices()[0]);
+        return Plane{ normal, -dotProduct(normal, Vector<3>{ triangle.getVertices()[0] }) };
+    }
+
+    bool haveIntersection(const Triangle<3>& lhs, const Triangle<3>& rhs)
+    {
+        const auto [intersect1, lhsDistancesToRhs] = haveIntersectionWithPlane(lhs, getPlane(rhs));
+        if (!intersect1)
         {
             return false;
         }
 
-        const auto otherPlane = other.getPlane();
-        std::array<float, 3> distancesToOtherPlane{ otherPlane.getDistanceToPoint(vertice1), 
-            otherPlane.getDistanceToPoint(vertice2), otherPlane.getDistanceToPoint(vertice3) };
-        if ((distancesToOtherPlane[0] > 0 && distancesToOtherPlane[1] > 0 && distancesToOtherPlane[2] > 0)
-            || (distancesToOtherPlane[0] < 0 && distancesToOtherPlane[1] < 0 && distancesToOtherPlane[2] < 0))
+        const auto [intersect2, rhsDistancesToLhs] = haveIntersectionWithPlane(rhs, getPlane(lhs));
+        if (!intersect2)
         {
             return false;
         }
 
+        // Check that all zeroes
+        if (checkAllZeroes(lhsDistancesToRhs))
+        {
+            if (!checkAllZeroes(rhsDistancesToLhs))
+            {
+                throw std::runtime_error("Distances should all be zeroes in case of coplanar planes");
+            }
+
+            // Find the best suiting axis to project
+            size_t axisToProject = 0;
+            float biggestSquare = 0.0f;
+            for(size_t i = 0; i < 3; ++i)
+            {
+                const auto currentSquare = lhs.project(i).square();
+                axisToProject = currentSquare > biggestSquare ? i : axisToProject;
+                biggestSquare = currentSquare > biggestSquare ? currentSquare : biggestSquare;
+            }
+            
+            const auto lhsProjection = lhs.project(axisToProject);
+            const auto rhsProjection = rhs.project(axisToProject);
+        }
+
+
+        /*
         // Find intersection line L = O + tD, wher D = N1 * N2, O - some point on L
         const auto D = trianglePlane.getNormal() * otherPlane.getNormal();
 
@@ -163,37 +171,7 @@ namespace triangles
         }
         std::cout << intervalT1[0] << " " << intervalT1[1] << std::endl;
         std::cout << intervalT2[0] << " " << intervalT2[1] << std::endl;
+        */
         return true;
     }
-
-    float getIntervalPoint(float p1, float p2, float d1, float d2)
-    {
-        float point = 0.0;
-        if (p1 >= p2)
-        {
-            point = p2;
-            if (d2 > d1)
-            {
-                point += (p1 - p2) * d2 / (d2 - d1);
-            } 
-            else
-            {
-                point += (p1 - p2) * d1 / (d1 - d2);
-            }
-        }
-        else
-        {
-            point = p1;
-            if (d2 > d1)
-            {
-                point += (p2 - p1) * d2 / (d2 - d1);
-            } 
-            else
-            {
-                point += (p2 - p1) * d1 / (d1 - d2);
-            }
-        }
-        return point;
-    }
 }
-*/

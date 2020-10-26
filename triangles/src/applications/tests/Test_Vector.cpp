@@ -45,4 +45,17 @@ TEST(TestVector, DotProductUnit)
     EXPECT_EQ(triangles::dotProduct(vec21, vec22), 10.0);
 }
 
+TEST(TestVector, CollinearUnit)
+{   
+    const triangles::Vector<2> vec11 { std::array<float, 2> { 1.0, 1.0 } };
+    const triangles::Vector<2> vec12 { std::array<float, 2> { 2.0, 2.0 } };
+    
+    EXPECT_EQ(isCollinear(vec11, vec12), true);
+
+    const triangles::Vector<2> vec21 { std::array<float, 2>{ 1.0, 0.0 } };
+    const triangles::Vector<2> vec22 { std::array<float, 2>{ 0.0, 1.0 } };
+
+    EXPECT_EQ(isCollinear(vec21, vec22), false);
+}
+
 }

@@ -16,15 +16,34 @@ namespace triangles
 
     public:
         explicit Point(const std::array<float, Dim>& coords);
+
         // Getter
         const float& operator[](size_t index) const { return coordinates[index]; }
         const std::array<float, Dim>& getCoordinates() const { return coordinates; }
+        size_t getDims() const { return Dim; }
+
+        Point<Dim - 1> deleteAxis(size_t axis) const;
     };
 
     template <size_t Dim>
     Point<Dim>::Point(const std::array<float, Dim>& cs)
         : coordinates(cs)
     {
+    }
+
+    template <size_t Dim>
+    Point<Dim - 1> Point<Dim>::deleteAxis(size_t axis) const
+    {
+        std::array<float, Dim - 1> reducedPoint{};
+        size_t j = 0;
+        for(size_t i = 0; i < Dim; ++i)
+        {
+            if(i != axis)
+            {
+                reducedPoint[j++] = coordinates[i];
+            }
+        }
+        return Point<Dim - 1>(reducedPoint);
     }
 
     template <size_t Dim>
@@ -38,9 +57,12 @@ namespace triangles
     template <size_t Dim>
     float getDistance(const Point<Dim>& p1, const Point<Dim>& p2)
     {
-        return std::sqrt((p1[0] - p2[0]) * (p1[0] - p2[0])
-            + (p1[1] - p2[1]) * (p1[1] - p2[1])
-            + (p1[2] - p2[2]) * (p1[2] - p2[2]));
+        float distance = 0.0f;
+        for (size_t i = 0; i < Dim; ++i)
+        {
+            distance += (p1[i] - p2[i]) * (p1[i] - p2[i]);
+        }
+        return std::sqrt(distance);
     }
 
     template <size_t Dim>
@@ -100,7 +122,9 @@ namespace triangles
         return std::inner_product(std::begin(lhs), std::end(lhs), std::begin(rhs), 0.0f);
     }
 
+    bool isCollinear(const Vector<2>& lhs, const Vector<2>& rhs);
     Vector<3> operator*(const Vector<3>& lhs, const Vector<3>& rhs);
+    Vector<3> operator*(const Vector<2>& lhs, const Vector<2>& rhs);
 }
 
 #endif
