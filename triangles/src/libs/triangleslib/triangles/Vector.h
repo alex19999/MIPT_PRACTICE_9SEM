@@ -86,7 +86,7 @@ namespace triangles
         auto begin() const { return points.cbegin(); }
         auto end() const { return points.cend(); }
     };
-
+    
     template <size_t Dim>
     Vector<Dim>::Vector(const std::array<float, Dim>& ps)
         : points(ps)

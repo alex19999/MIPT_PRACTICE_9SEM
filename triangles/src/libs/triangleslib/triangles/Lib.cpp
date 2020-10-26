@@ -1,6 +1,4 @@
-#include <cmath>
-#include <array>
-#include "Triangles.h"
+#include "Lib.h"
 
 namespace
 {
@@ -50,7 +48,20 @@ namespace
 
 namespace triangles
 {
-    bool edgeIntersect(const Segment<2>& lhs, const Segment<2>& rhs)
+    std::pair<bool, std::array<float, 3>> haveIntersectionWithPlane(const Triangle<3>& triangle, const Plane& otherPlane)
+    {
+        std::array<float, 3> distancesToOtherPlane{ otherPlane.getDistanceToPoint(triangle.getVertices()[0]), 
+            otherPlane.getDistanceToPoint(triangle.getVertices()[1]), otherPlane.getDistanceToPoint(triangle.getVertices()[2]) };
+        bool haveIntersection = true;
+        if ((distancesToOtherPlane[0] > 0 && distancesToOtherPlane[1] > 0 && distancesToOtherPlane[2] > 0)
+            || (distancesToOtherPlane[0] < 0 &&distancesToOtherPlane[1] < 0 && distancesToOtherPlane[2] < 0))
+        {
+            haveIntersection = false;
+        }
+        return std::make_pair(haveIntersection, distancesToOtherPlane);
+    }
+
+    bool edgeIntersect(const Edge<2>& lhs, const Edge<2>& rhs)
     {
         return true;
     }
@@ -69,12 +80,6 @@ namespace triangles
             }
         }
         return false;
-    }
-
-    Plane getPlane(const Triangle<3>& triangle)
-    {
-        const auto normal = Vector<3>(triangle.getVertices()[1], triangle.getVertices()[0]) * Vector<3>(triangle.getVertices()[2], triangle.getVertices()[0]);
-        return Plane{ normal, -dotProduct(normal, Vector<3>{ triangle.getVertices()[0] }) };
     }
 
     bool haveIntersection(const Triangle<3>& lhs, const Triangle<3>& rhs)
@@ -170,8 +175,7 @@ namespace triangles
             return false;
         }
         std::cout << intervalT1[0] << " " << intervalT1[1] << std::endl;
-        std::cout << intervalT2[0] << " " << intervalT2[1] << std::endl;
-        */
+        std::cout << intervalT2[0] << " " << intervalT2[1] << std::endl;*/
         return true;
     }
 }

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <triangles/Triangles.h>
+#include <triangles/Triangle.h>
 
 namespace UT
 {
@@ -50,16 +50,6 @@ TEST(TestPlane, DistanceToPointUnit)
     EXPECT_NEAR(plane.getDistanceToPoint(testPoint3), -6.8621814622618915, eps);
 }
 
-/*
-TEST(TestTriangle, IncorrectTrianglesUnit)
-{   
-    const triangles::Point<3> point1 { std::array<float, 3> { 2.0, 0.0, 0.0 } };
-    const triangles::Point<3> point2 { std::array<float, 3> { 2.0, 0.0, 0.0 } };
-    const triangles::Point<3> point3 { std::array<float, 3> { 18.0, 0.0, 0.0 } };
-    
-    EXPECT_THROW(triangles::Triangle<3>( point1, point2, point3 ), std::runtime_error);
-}
-*/
 TEST(TestTriangle, SquareUnit)
 {   
     const triangles::Point<3> point1 { std::array<float, 3> { 0.0, 0.0, 0.0 } };
@@ -90,57 +80,4 @@ TEST(TestTriangle, ProjectUnit)
     EXPECT_EQ(triangle2D.getVertices()[2][1], 0.0);
 }
 
-TEST(TestTriangle, NoPlaneIntersectionUnit)
-{   
-    const triangles::Point<3> point11 { std::array<float, 3> { 0.0, 0.0, 0.0 } };
-    const triangles::Point<3> point12 { std::array<float, 3> { 3.0, 0.0, 0.0 } };
-    const triangles::Point<3> point13 { std::array<float, 3> { 1.5, 3.0, 0.0 } };
-    
-    triangles::Triangle<3> triangle1{ point11, point12, point13 };
-
-    const triangles::Point<3> point21 { std::array<float, 3> { 4.0, 0.0, 1.0 } };
-    const triangles::Point<3> point22 { std::array<float, 3> { 5.0, 0.0, 1.0 } };
-    const triangles::Point<3> point23 { std::array<float, 3> { 3.5, 0.0, 3.0 } };
-    
-    triangles::Triangle<3> triangle2{ point21, point22, point23 };
-
-    EXPECT_FALSE(haveIntersection(triangle1, triangle2));
-}
-
-TEST(TestTriangle, CoplanarNoIntersectionUnit)
-{   
-    const triangles::Point<3> point11 { std::array<float, 3> { 0.0, 0.0, 0.0 } };
-    const triangles::Point<3> point12 { std::array<float, 3> { 2.0, 0.0, 0.0 } };
-    const triangles::Point<3> point13 { std::array<float, 3> { 1.0, 3.0, 0.0 } };
-    
-    triangles::Triangle<3> triangle1{ point11, point12, point13 };
-
-    const triangles::Point<3> point21 { std::array<float, 3> { 4.0, 0.0, 0.0 } };
-    const triangles::Point<3> point22 { std::array<float, 3> { 6.0, 0.0, 0.0 } };
-    const triangles::Point<3> point23 { std::array<float, 3> { 5.0, 3.0, 0.0 } };
-    
-    triangles::Triangle<3> triangle2{ point21, point22, point23 };
-
-    haveIntersection(triangle1, triangle2);
-}
-
-/*
-TEST(TestTriangle, NoTrianglesIntersectionUnit)
-{   
-    const triangles::Point point11 { 0.0, 0.0, 0.0 };
-    const triangles::Point point12 { 3.0, 0.0, 0.0 };
-    const triangles::Point point13 { 1.5, 3.0, 0.0 };
-    
-    triangles::Triangle triangle1{ point11, point12, point13 };
-
-    const triangles::Point point21 { 4.0, 1.0, -1.0 };
-    const triangles::Point point22 { 5.0, 1.0, -1.0 };
-    const triangles::Point point23 { 6.0, 1.0, 3.0 };
-    
-    triangles::Triangle triangle2{ point21, point22, point23 };
-
-    EXPECT_FALSE(triangle1.hasIntersection(triangle2));
-    EXPECT_FALSE(triangle2.hasIntersection(triangle1));
-}
-*/
 } // namespace UT
