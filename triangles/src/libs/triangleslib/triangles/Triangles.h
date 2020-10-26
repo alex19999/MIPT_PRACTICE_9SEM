@@ -38,27 +38,32 @@ namespace triangles
 
     float getIntervalPoint(float p1, float p2, float d1, float d2);
 
-    /*
     template <size_t Dim>
     class Triangle
     {
-        Point vertice1;
-        Point vertice2;
-        Point vertice3;
-
+        std::array<Point<Dim>, 3> vertices;
         Plane<Dim> trianglePlane;
 
     public:
-        Triangle(const Point<Dim>& vert1, const<Dim>& Point vert2, const Point<Dim>& vert3);
+        Triangle(const Point<Dim>& vert1, const Point<Dim>& vert2, const Point<Dim>& vert3);
 
         // Only getters
-        const Point& getVertice1() const { return vertice1; }
-        const Point& getVertice2() const { return vertice2; }
-        const Point& getVertice3() const { return vertice3; }
-
-        const Plane& getPlane() const { return trianglePlane; }
-
-        bool hasIntersection(const Triangle& other) const;
+        const std::array<Point<Dim>, 3>& getVertices() const { return vertices; }
+        const Plane<Dim>& getPlane() const { return trianglePlane; }
+        //bool hasIntersection(const Triangle& other) const;
     };
-    */
+
+    template <size_t Dim>
+    Triangle<Dim>::Triangle(const Point<Dim>& vert1, const Point<Dim>& vert2, const Point<Dim>& vert3)
+    : vertices(std::array<Point<Dim>, Dim> { vert1, vert2, vert3 })
+    , trianglePlane(Plane<Dim>(vert1, vert2, vert3))
+    {
+        // Check lengthes of edges
+        if (getDistance(vert1, vert2) + getDistance(vert1, vert3) <= getDistance(vert2, vert3) 
+            || getDistance(vert1, vert2) + getDistance(vert2, vert3) <= getDistance(vert3, vert1)
+            || getDistance(vert3, vert1) + getDistance(vert2, vert3) <= getDistance(vert1, vert2))
+        {
+            throw std::runtime_error("Cannot build triangle on these points: incorrect lengthes");
+        }
+    }
 }

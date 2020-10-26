@@ -47,22 +47,15 @@ TEST(TestPlane, DistanceToPointUnit)
     EXPECT_NEAR(plane.getDistanceToPoint(testPoint3), -6.8621814622618915, eps);
 }
 
-/*
 TEST(TestTriangle, IncorrectTrianglesUnit)
 {   
-    const triangles::Point point11 { 1.0, 0.0, 0.0 };
-    const triangles::Point point12 { 2.0, 0.0, 0.0 };
-    const triangles::Point point13 { 3.0, 0.0, 0.0 };
+    const triangles::Point<3> point1 { std::array<float, 3> { 2.0, 0.0, 0.0 } };
+    const triangles::Point<3> point2 { std::array<float, 3> { 2.0, 0.0, 0.0 } };
+    const triangles::Point<3> point3 { std::array<float, 3> { 18.0, 0.0, 0.0 } };
     
-    EXPECT_THROW(triangles::Triangle( point11, point12, point13 ), std::runtime_error);
-
-    const triangles::Point point21 { 2.0, 0.0, 0.0 };
-    const triangles::Point point22 { 2.0, 0.0, 0.0 };
-    const triangles::Point point23 { 18.0, 0.0, 0.0 };
-    
-    EXPECT_THROW(triangles::Triangle( point21, point22, point23 ), std::runtime_error);
+    EXPECT_THROW(triangles::Triangle<3>( point1, point2, point3 ), std::runtime_error);
 }
-
+/*
 TEST(TestTriangle, NoPlaneIntersectionUnit)
 {   
     const triangles::Point point11 { 0.0, 0.0, 0.0 };
