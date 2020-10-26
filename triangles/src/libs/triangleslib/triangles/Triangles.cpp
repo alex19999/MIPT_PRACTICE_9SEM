@@ -1,7 +1,7 @@
 #include <cmath>
 #include <array>
 #include "Triangles.h"
-
+/*
 namespace triangles
 {
     Point::Point(float x_, float y_, float z_)
@@ -196,3 +196,4 @@ namespace triangles
         return point;
     }
 }
+*/

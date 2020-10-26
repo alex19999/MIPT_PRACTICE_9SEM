@@ -2,7 +2,7 @@
 #include <vector>
 
 // Follows http://web.stanford.edu/class/cs277/resources/papers/Moller1997b.pdf
-
+/*
 namespace triangles
 {
     class Point
@@ -73,7 +73,7 @@ namespace triangles
     };
 
     float getIntervalPoint(float p1, float p2, float d1, float d2);
-    
+
     class Triangle
     {
         Point vertice1;
@@ -95,3 +95,4 @@ namespace triangles
         bool hasIntersection(const Triangle& other) const;
     };
 }
+*/
