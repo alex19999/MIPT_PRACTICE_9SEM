@@ -9,7 +9,7 @@ TEST(TestPoint, DistanceUnit)
     triangles::Point<3> p1 { std::array<float, 3> { 3.0, 0.0, 0.0} };
     triangles::Point<3> p2 { std::array<float, 3> { 0.0, 4.0, 0.0} };
     
-    EXPECT_EQ(getDistance(p1, p2), 5.0);
+    EXPECT_EQ(triangles::getDistance(p1, p2), 5.0);
 }
 
 TEST(TestPoint, MinusUnit)

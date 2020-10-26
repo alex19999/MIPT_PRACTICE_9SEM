@@ -49,6 +49,7 @@ namespace triangles
         std::array<float, Dim> points;
     public:
         Vector(const std::array<float, Dim>& points);
+        Vector(const Point<Dim>& point);
         Vector(const Point<Dim>& end, const Point<Dim>& begin);
 
         float getLength() const;
@@ -67,6 +68,12 @@ namespace triangles
     template <size_t Dim>
     Vector<Dim>::Vector(const std::array<float, Dim>& ps)
         : points(ps)
+    {
+    }
+
+    template <size_t Dim>
+    Vector<Dim>::Vector(const Point<Dim>& point)
+        : points(point.getCoordinates())
     {
     }
 

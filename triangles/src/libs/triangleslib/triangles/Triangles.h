@@ -1,28 +1,44 @@
 #include <iostream>
 #include <vector>
 
+#include "Vector.h"
+
 // Follows http://web.stanford.edu/class/cs277/resources/papers/Moller1997b.pdf
 namespace triangles
 {
-    /*
+    template <size_t Dim>
     class Plane
     {
-        Vector normal;
+        Vector<Dim> normal;
         float D;
 
     public:
-        Plane(const Point& p1, const Point& p2, const Point& p3);
+        Plane(const Point<Dim>& p1, const Point<Dim>& p2, const Point<Dim>& p3);
 
         // Getters
         float getD() const { return D; };
-        const Vector& getNormal() const { return normal; }
+        const Vector<Dim>& getNormal() const { return normal; }
 
         // Calculate distance to particular point
-        float getDistanceToPoint(const Point& p) const;
+        float getDistanceToPoint(const Point<Dim>& p) const;
     };
+
+    template <size_t Dim>
+    Plane<Dim>::Plane(const Point<Dim>& p1, const Point<Dim>& p2, const Point<Dim>& p3)
+    : normal(Vector<Dim>{ p2, p1 } * Vector<Dim>{ p3, p1 })
+    , D(-dotProduct(normal, Vector<Dim>{ p1 }))
+    {
+    }
+
+    template <size_t Dim>
+    float Plane<Dim>::getDistanceToPoint(const Point<Dim>& p) const
+    {
+        return (dotProduct(normal, Vector<Dim>{p}) + D) / normal.getLength();
+    }
 
     float getIntervalPoint(float p1, float p2, float d1, float d2);
 
+    /*
     template <size_t Dim>
     class Triangle
     {
@@ -30,7 +46,7 @@ namespace triangles
         Point vertice2;
         Point vertice3;
 
-        Plane trianglePlane;
+        Plane<Dim> trianglePlane;
 
     public:
         Triangle(const Point<Dim>& vert1, const<Dim>& Point vert2, const Point<Dim>& vert3);
