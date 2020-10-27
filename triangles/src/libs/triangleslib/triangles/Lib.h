@@ -5,8 +5,6 @@
 
 namespace triangles
 {
-    float getIntervalPoint(float p1, float p2, float d1, float d2);
-
     std::pair<bool, std::array<float, 3>> haveIntersectionWithPlane(const Triangle<3>& triangle, const Plane& otherPlane);
 
     // Are nested triangles
