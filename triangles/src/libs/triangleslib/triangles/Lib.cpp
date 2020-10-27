@@ -63,7 +63,18 @@ namespace triangles
 
     bool edgeIntersect(const Edge<2>& lhs, const Edge<2>& rhs)
     {
-        return true;
+        if (isCollinear(lhs.getEdge(), rhs.getEdge()))
+        {
+            if (!isOneLineLying(lhs, rhs))
+            {
+                return false;
+            }
+            if (haveIntersection(lhs, rhs))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     bool haveIntersection(const Triangle<2>& lhs, const Triangle<2>& rhs)
@@ -116,6 +127,8 @@ namespace triangles
             
             const auto lhsProjection = lhs.project(axisToProject);
             const auto rhsProjection = rhs.project(axisToProject);
+
+            return haveIntersection(lhsProjection, rhsProjection);
         }
 
 
