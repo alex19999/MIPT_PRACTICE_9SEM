@@ -2,11 +2,21 @@
 
 namespace triangles
 {
-    bool isCollinear(const Vector<2>& lhs, const Vector<2>& rhs, float eps)
+    float crossProduct(const Vector<2>& lhs, const Vector<2>& rhs)
     {
-        return std::abs((lhs[0] * rhs[1] - lhs[1] * rhs[0]) / (lhs.getLength() * rhs.getLength())) <= eps;
+        return lhs[0] * rhs[1] - lhs[1] * rhs[0];
     }
     
+    float crossProductN(const Vector<2>& lhs, const Vector<2>& rhs)
+    {
+        return crossProduct(lhs, rhs) / lhs.getLength() / rhs.getLength();
+    }
+
+    bool isCollinear(const Vector<2>& lhs, const Vector<2>& rhs, float eps)
+    {
+        return std::abs(crossProductN(lhs, rhs)) <= eps;
+    }
+
     Vector<3> operator*(const Vector<3>& lhs, const Vector<3>& rhs)
     {
         return Vector<3>{ std::array<float, 3>{ lhs[1] * rhs[2] - rhs[1] * lhs[2],

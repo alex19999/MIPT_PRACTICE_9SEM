@@ -63,17 +63,28 @@ namespace triangles
 
     bool edgeIntersect(const Edge<2>& lhs, const Edge<2>& rhs)
     {
+        // Collinear or on one line
         if (isCollinear(lhs.getEdge(), rhs.getEdge()))
         {
             if (!isOneLineLying(lhs, rhs))
             {
                 return false;
             }
-            if (haveIntersection(lhs, rhs))
-            {
-                return true;
-            }
+
+            // Lying on one line then
+            return haveIntersection(lhs, rhs);
         }
+
+        //Decide whether they are cross vectors
+        const auto delimeter = (lhs.getEdge() * crossProduct(Vector<2>(rhs.getEnd()), Vector<2>(rhs.getBegin())) - 
+            rhs.getEdge() * crossProduct(Vector<2>(lhs.getEnd()), Vector<2>(lhs.getBegin()))) * ( 1.0f / crossProduct(rhs.getEdge(), lhs.getEdge()));
+
+        if (dotProduct(delimeter - Vector<2>(lhs.getBegin()), delimeter - Vector<2>(lhs.getEnd())) <= 0
+            && dotProduct(delimeter - Vector<2>(rhs.getBegin()), delimeter - Vector<2>(rhs.getEnd())) <= 0)
+        {
+            return true;
+        }
+
         return false;
     }
 

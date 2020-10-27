@@ -89,6 +89,23 @@ TEST(TestLib, CoplanarInternalIntersectionUnit)
     EXPECT_TRUE(haveIntersection(triangle1, triangle2));
 }
 
+TEST(TestLib, CoplanarCrosslIntersectionUnit)
+{   
+    const triangles::Point<3> point11 { std::array<float, 3> { 0.0, 0.0, 0.0 } };
+    const triangles::Point<3> point12 { std::array<float, 3> { 3.0, 0.0, 0.0 } };
+    const triangles::Point<3> point13 { std::array<float, 3> { 1.5, 3.0, 0.0 } };
+    
+    triangles::Triangle<3> triangle1{ point11, point12, point13 };
+
+    const triangles::Point<3> point21 { std::array<float, 3> { 0.0, 0.0, 0.0 } };
+    const triangles::Point<3> point22 { std::array<float, 3> { 4.0, 2.0, 0.0 } };
+    const triangles::Point<3> point23 { std::array<float, 3> { 4.0, 3.0, 0.0 } };
+    
+    triangles::Triangle<3> triangle2{ point21, point22, point23 };
+
+    EXPECT_TRUE(haveIntersection(triangle1, triangle2));
+}
+
 /*
 TEST(TestLib, NoTrianglesIntersectionUnit)
 {   

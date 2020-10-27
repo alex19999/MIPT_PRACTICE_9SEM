@@ -18,7 +18,7 @@ namespace triangles
         explicit Point(const std::array<float, Dim>& coords);
 
         // Getter
-        const float& operator[](size_t index) const { return coordinates[index]; }
+        float operator[](size_t index) const { return coordinates[index]; }
         const std::array<float, Dim>& getCoordinates() const { return coordinates; }
         size_t getDims() const { return Dim; }
 
@@ -71,26 +71,39 @@ namespace triangles
         std::array<float, Dim> points;
     public:
         Vector(const std::array<float, Dim>& points);
+        Vector(const Vector<Dim>& other);
         Vector(const Point<Dim>& point);
         Vector(const Point<Dim>& end, const Point<Dim>& begin);
 
         float getLength() const;
         
         // Getters
-        const float& operator[](size_t index) const { return points[index]; }
+        float operator[](size_t index) const { return points[index]; }
         size_t getDims() const { return Dim; }
+        const std::array<float, Dim>& getPoints() const { return points; }
 
         // iterators
         auto begin() { return points.begin(); }
         auto end() { return points.end(); }
         auto begin() const { return points.cbegin(); }
         auto end() const { return points.cend(); }
+
+        void operator*=(float value);
     };
     
     template <size_t Dim>
     Vector<Dim>::Vector(const std::array<float, Dim>& ps)
         : points(ps)
     {
+    }
+
+    template <size_t Dim>
+    Vector<Dim>::Vector(const Vector<Dim>& other)
+    {
+        for (size_t i = 0; i < Dim; ++i)
+        {
+            points[i] = other[i];
+        }
     }
 
     template <size_t Dim>
@@ -122,6 +135,28 @@ namespace triangles
         return std::inner_product(std::begin(lhs), std::end(lhs), std::begin(rhs), 0.0f);
     }
 
+    template <size_t Dim>
+    Vector<Dim> operator-(const Vector<Dim>& lhs, const Vector<Dim>& rhs)
+    {
+        return Vector{ Point(lhs.getPoints()), Point(rhs.getPoints()) };
+    }
+
+    template <size_t Dim>
+    void Vector<Dim>::operator*=(float value)
+    {
+        std::transform(points.begin(), points.end(), points.begin(), [value](float& c){ return c * value; });
+    }
+
+    template <size_t Dim>
+    Vector<Dim> operator*(const Vector<Dim>& lhs, float value)
+    {
+        Vector<Dim> vec{ lhs };
+        vec *= value;
+        return vec;
+    }
+    
+    float crossProduct(const Vector<2>& lhs, const Vector<2>& rhs);
+    float crossProductN(const Vector<2>& lhs, const Vector<2>& rhs);
     bool isCollinear(const Vector<2>& lhs, const Vector<2>& rhs, float eps = 1.0e-8f);
     Vector<3> operator*(const Vector<3>& lhs, const Vector<3>& rhs);
     Vector<3> operator*(const Vector<2>& lhs, const Vector<2>& rhs);
