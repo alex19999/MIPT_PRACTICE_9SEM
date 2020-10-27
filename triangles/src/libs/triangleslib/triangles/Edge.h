@@ -14,6 +14,10 @@ namespace triangles
     
     public:
         Edge(Point<Dim> b, Point<Dim> e);
+
+        const Point<Dim>& getBegin() const { return begin; }
+        const Point<Dim>& getEnd() const { return end; }
+        const Vector<Dim>& getEdge() const { return edge; }
     };
 
     template <size_t Dim>
@@ -23,6 +27,8 @@ namespace triangles
         , edge(Vector<Dim>(end, begin))
     {
     }
+
+    bool isOneLineLying(const Edge<2>& lhs, const Edge<2>& rhs, float eps = 1.0e-8f);
 }
 
 #endif

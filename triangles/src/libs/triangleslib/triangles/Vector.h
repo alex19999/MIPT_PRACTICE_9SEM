@@ -122,7 +122,7 @@ namespace triangles
         return std::inner_product(std::begin(lhs), std::end(lhs), std::begin(rhs), 0.0f);
     }
 
-    bool isCollinear(const Vector<2>& lhs, const Vector<2>& rhs);
+    bool isCollinear(const Vector<2>& lhs, const Vector<2>& rhs, float eps = 1.0e-8f);
     Vector<3> operator*(const Vector<3>& lhs, const Vector<3>& rhs);
     Vector<3> operator*(const Vector<2>& lhs, const Vector<2>& rhs);
 }
