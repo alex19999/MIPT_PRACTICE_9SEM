@@ -29,6 +29,8 @@ namespace triangles
     }
 
     bool isOneLineLying(const Edge<2>& lhs, const Edge<2>& rhs, float eps = 1.0e-8f);
+
+    bool haveIntersection(const Edge<2>& lhs, const Edge<2>& rhs);
 }
 
 #endif
