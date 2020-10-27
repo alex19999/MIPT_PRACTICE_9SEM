@@ -88,8 +88,37 @@ namespace triangles
         return false;
     }
 
+    bool isNested(const Triangle<2>& lhs, const Point<2>& someRhsPoint)
+    {   
+        size_t j = 0;
+        size_t k = 0;
+        auto lhsVertices = lhs.getVertices();
+        for (size_t i = 0; i < 3; ++i)
+        {
+            j = (i + 1) % 3;
+            k = (i + 2) % 3;
+            if (dotProduct(Vector<2>(lhsVertices[k], lhsVertices[j]) * Vector<2>(someRhsPoint, lhsVertices[j]), Vector<2>(lhsVertices[k], lhsVertices[j]) * Vector<2>(lhsVertices[i], lhsVertices[j])) < 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     bool haveIntersection(const Triangle<2>& lhs, const Triangle<2>& rhs)
     {
+        // Check nesting of triangles - less operations 
+        if (isNested(lhs, rhs.getVertices()[0]))
+        {
+            return true;
+        }
+
+        if (isNested(rhs, lhs.getVertices()[0]))
+        {
+            return true;
+        }
+
         // Check edges intersection
         for (size_t i = 0; i < lhs.getEdges().size(); ++i)
         {
@@ -101,6 +130,7 @@ namespace triangles
                 }
             }
         }
+
         return false;
     }
 

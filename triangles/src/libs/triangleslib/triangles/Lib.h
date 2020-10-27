@@ -9,6 +9,9 @@ namespace triangles
 
     std::pair<bool, std::array<float, 3>> haveIntersectionWithPlane(const Triangle<3>& triangle, const Plane& otherPlane);
 
+    // Are nested triangles
+    bool isNested(const Triangle<2>& lhs, const Point<2>& someRhsPoint);
+
     // Egde 2D intersect
     bool eddeIntersect(const Edge<2>& lhs, const Edge<2>& rhs);
 
