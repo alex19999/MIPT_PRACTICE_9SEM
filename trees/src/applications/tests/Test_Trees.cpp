@@ -6,38 +6,114 @@ namespace UT
 
 TEST(TestTree, InsertUnit)
 {
-    trees::SplayNode<int> root{ 1 };
+    trees::SplayTree<int> tree{};
 
     // Insert values
-    root.insert(2);
-    root.insert(3);
-    root.insert(0);
-    root.insert(-1);
-    root.insert(-3);
-    root.insert(5);
-    root.insert(-10);
+    tree.insert(2);
+    tree.insert(3);
+    tree.insert(0);
+    tree.insert(-1);
+    tree.insert(-3);
+    tree.insert(5);
+    tree.insert(-10);
 
-    const auto result = root.print();
-    EXPECT_EQ(result, std::string(" -10 -3 -1 0 1 2 3 5"));
+    // Repeat
+    tree.insert(0);
+    tree.insert(-10);
+
+    const auto result = tree.print(tree.getRoot());
+    EXPECT_EQ(result, std::string(" -10 -3 -1 0 2 3 5"));
 }
 
 TEST(TestTree, FindUnit)
 {
-    trees::SplayNode<int> root{ 1 };
+    trees::SplayTree<int> tree{};
 
     // Insert values
-    root.insert(2);
-    root.insert(8);
-    root.insert(7);
-    root.insert(-1);
-    root.insert(-12);
-    root.insert(5);
-    root.insert(-10);
+    tree.insert(2);
+    tree.insert(8);
+    tree.insert(7);
+    tree.insert(-1);
+    tree.insert(-12);
+    tree.insert(5);
+    tree.insert(-10);
 
-    EXPECT_EQ(root.find(2).first, true);
-    EXPECT_EQ(root.find(-1).first, true);
-    EXPECT_EQ(root.find(-21).first, false);
-    EXPECT_EQ(root.find(-21).second, nullptr);
+    EXPECT_EQ(tree.find(2), true);
+    EXPECT_EQ(tree.find(-1), true);
+    EXPECT_EQ(tree.find(-21), false);
+}
+
+TEST(TestTree, RemoveLeafUnit)
+{
+    trees::SplayTree<int> tree{};
+
+    // Insert values
+    tree.insert(2);
+    tree.insert(8);
+    tree.insert(7);
+    tree.insert(-1);
+    tree.insert(-12);
+    tree.insert(5);
+    tree.insert(-10);
+
+    tree.remove(-10);
+    
+    const auto result = tree.print(tree.getRoot());
+    EXPECT_EQ(result, std::string(" -12 -1 2 5 7 8"));
+}
+
+TEST(TestTree, RemoveNonLeafUnit)
+{
+    trees::SplayTree<int> tree{};
+
+    // Insert values
+    tree.insert(2);
+    tree.insert(8);
+    tree.insert(7);
+    tree.insert(-1);
+    tree.insert(-12);
+    tree.insert(5);
+    tree.insert(-10);
+
+    tree.remove(-12);
+    const auto result = tree.print(tree.getRoot());
+    EXPECT_EQ(result, std::string(" -10 -1 2 5 7 8"));
+}
+
+TEST(TestTree, RemoveRootUnit)
+{
+    trees::SplayTree<int> tree{};
+
+    // Insert values
+    tree.insert(2);
+    tree.insert(8);
+    tree.insert(7);
+    tree.insert(-1);
+    tree.insert(-12);
+    tree.insert(5);
+    tree.insert(-10);
+
+    tree.remove(2);
+    const auto result = tree.print(tree.getRoot());
+    EXPECT_EQ(result, std::string(" -12 -10 -1 5 7 8"));
+}
+
+TEST(TestTree, NoRemoveUnit)
+{
+    trees::SplayTree<int> tree{};
+
+    // Insert values
+    tree.insert(2);
+    tree.insert(8);
+    tree.insert(7);
+    tree.insert(-1);
+    tree.insert(-12);
+    tree.insert(5);
+    tree.insert(-10);
+
+    tree.remove(21);
+    const auto result = tree.print(tree.getRoot());
+    EXPECT_EQ(result, std::string(" -12 -10 -1 2 5 7 8"));
 }
 
 }
