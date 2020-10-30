@@ -31,6 +31,13 @@ namespace trees
         void _rebinding(Node* parent, Node* child);
         
         void _flush(Node* root);
+        
+        // Rotations
+        void _leftRotate(Node* oldRoot);
+        void _rightRotate(Node* oldRoot);
+
+        // zig/zigzag/zigzig movements
+        void _Splay(Node* newRoot);
 
     public:
         SplayTree() : root(nullptr) { }
@@ -45,6 +52,96 @@ namespace trees
         // For validation
         std::string print(Node* from = nullptr, std::string& result = std::string(""));
     };
+
+
+    template <typename T>
+    void SplayTree<T>::_flush(Node* root)
+    {
+        if (root == nullptr)
+        {
+            return;
+        }
+
+        _flush(root->left);
+        _flush(root->right);
+        delete root;
+    }
+
+    template <typename T>
+    typename SplayTree<T>::Node* SplayTree<T>::_find(const T& value)
+    {
+        auto startPoint = root;
+        while(startPoint != nullptr)
+        {
+            if (startPoint->key == value)
+            {
+                return startPoint;
+            }
+            if (startPoint->key < value)
+            {
+                startPoint = startPoint->right;
+                continue;
+            }
+            if (startPoint->key > value)
+            {
+                startPoint = startPoint->left;
+                continue;
+            }
+        }
+        return nullptr;
+    }
+
+    template <typename T>
+    void SplayTree<T>::_rebinding(Node* parent, Node* child)
+    {
+        if (parent->parent == nullptr)
+        {
+            root = child;
+        }
+        else if (parent == parent->parent->left)
+        {
+            parent->parent->left = child;
+        }
+        else if (parent == parent->parent->right)
+        {
+            parent->parent->right = child;
+        }
+
+        if (child != nullptr)
+        {
+            child->parent = parent->parent;
+        }
+    }
+
+    template <typename T>
+    void SplayTree<T>::_leftRotate(Node* oldRoot)
+    {
+        auto newRoot = old->right;
+        old->right = newRoot->left;
+        if (old->right != nullptr)
+        {
+            old->right->parent = old;
+        }
+
+        _rebinding(oldRoot, newRoot);
+        newRoot->left = oldRoot;
+        newRoot->left->parent = newRoot;
+    }
+
+    template <typename T>
+    void SplayTree<T>::_rightRotate(Node* oldRoot)
+    {
+        auto newRoot = old->left;
+        old->left = newRoot->right;
+        if (old->left != nullptr)
+        {
+            old->left->parent = old;
+        }
+
+        _rebinding(oldRoot, newRoot);
+        newRoot->right = oldRoot;
+        newRoot->right->parent = newRoot;
+    }
 
     template <typename T>
     void SplayTree<T>::insert(const T& value)
@@ -95,68 +192,9 @@ namespace trees
     }
 
     template <typename T>
-    void SplayTree<T>::_flush(Node* root)
-    {
-        if (root == nullptr)
-        {
-            return;
-        }
-
-        _flush(root->left);
-        _flush(root->right);
-        delete root;
-    }
-
-    template <typename T>
-    typename SplayTree<T>::Node* SplayTree<T>::_find(const T& value)
-    {
-        auto startPoint = root;
-        while(startPoint != nullptr)
-        {
-            if (startPoint->key == value)
-            {
-                return startPoint;
-            }
-            if (startPoint->key < value)
-            {
-                startPoint = startPoint->right;
-                continue;
-            }
-            if (startPoint->key > value)
-            {
-                startPoint = startPoint->left;
-                continue;
-            }
-        }
-        return nullptr;
-    }
-
-    template <typename T>
     bool SplayTree<T>::find(const T& value)
     {
         return _find(value) != nullptr;
-    }
-    
-    template <typename T>
-    void SplayTree<T>::_rebinding(Node* parent, Node* child)
-    {
-        if (parent->parent == nullptr)
-        {
-            root = child;
-        }
-        else if (parent == parent->parent->left)
-        {
-            parent->parent->left = child;
-        }
-        else if (parent == parent->parent->right)
-        {
-            parent->parent->right = child;
-        }
-
-        if (child != nullptr)
-        {
-            child->parent = parent->parent;
-        }
     }
 
     template <typename T>
