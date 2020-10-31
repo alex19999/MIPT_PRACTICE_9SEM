@@ -27,7 +27,7 @@ namespace trees
 
         }* root;
 
-        Node* _find(const T& value);
+        Node* _find(const T& value) const;
         void _rebinding(Node* parent, Node* child);
         
         void _flush(Node* root);
@@ -39,7 +39,7 @@ namespace trees
         // zig/zigzag/zigzig movements
         void _splay(Node* newRoot);
 
-        Node* _next(Node* current);
+        Node* _next(Node* current) const;
 
     public:
         SplayTree() : root(nullptr) { }
@@ -49,9 +49,11 @@ namespace trees
         bool find(const T& value);
         void remove(const T& value);
 
-        Node* upperBound(const T& value);
+        Node* upperBound(const T& value) const;
 
         Node* getRoot() const { return root; }
+
+        size_t rangeQuery(const T& lower, const T& upper) const;
 
         // For validation
         std::string print(Node* from = nullptr, std::string& result = std::string(""));
@@ -72,7 +74,7 @@ namespace trees
     }
 
     template <typename T>
-    typename SplayTree<T>::Node* SplayTree<T>::_find(const T& value)
+    typename SplayTree<T>::Node* SplayTree<T>::_find(const T& value) const
     {
         auto startPoint = root;
         while(startPoint != nullptr)
@@ -190,7 +192,7 @@ namespace trees
     }
 
     template <typename T>
-    typename SplayTree<T>::Node* SplayTree<T>::_next(Node* current)
+    typename SplayTree<T>::Node* SplayTree<T>::_next(Node* current) const
     {
         Node* next = current;
         if (current->right != nullptr)
@@ -319,7 +321,7 @@ namespace trees
     }
 
     template <typename T>
-    typename SplayTree<T>::Node* SplayTree<T>::upperBound(const T& value)
+    typename SplayTree<T>::Node* SplayTree<T>::upperBound(const T& value) const
     {
         Node* upperBound = root;
         Node* parent = nullptr;
@@ -338,6 +340,34 @@ namespace trees
         }
 
         return _next(parent);
+    }
+
+    template <typename T>
+    size_t SplayTree<T>::rangeQuery(const T& lower, const T& upper) const
+    {
+        if (lower >= upper)
+        {
+            throw std::runtime_error("Incorrect range given");
+        }
+        size_t suitableElems = 0;
+
+        auto begin = upperBound(lower);
+        auto end = upperBound(upper);
+
+        if (end == nullptr && begin == nullptr)
+        {
+            return suitableElems;
+        }
+
+        for(auto s = begin; s != end; s = _next(s))
+        {
+            suitableElems += 1u;
+        }
+        if (begin && begin->key == lower)
+        {
+            suitableElems -= 1u;
+        }
+        return suitableElems;
     }
     
     template <typename T>

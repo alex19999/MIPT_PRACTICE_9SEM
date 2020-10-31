@@ -222,4 +222,30 @@ TEST(TestTree, UpperBoundUnit)
     EXPECT_EQ(tree.upperBound(9), nullptr);
 }
 
+TEST(TestTree, RangeQueryUnit)
+{
+    trees::SplayTree<int> tree{};
+
+    // Insert values
+    tree.insert(10);
+    tree.insert(20);
+    tree.insert(30);
+    tree.insert(40);
+    
+    // Fully inside
+    EXPECT_EQ(tree.rangeQuery(8, 31), 3u);
+
+    // Fully outside
+    EXPECT_EQ(tree.rangeQuery(6, 9), 0u);
+    EXPECT_EQ(tree.rangeQuery(41, 42), 0u);
+
+    // On boundaries
+    EXPECT_EQ(tree.rangeQuery(8, 10), 0u);
+    EXPECT_EQ(tree.rangeQuery(40, 45), 0u);
+
+    // Cross
+    EXPECT_EQ(tree.rangeQuery(8, 15), 1u);
+    EXPECT_EQ(tree.rangeQuery(34, 85), 1u);
+}
+
 }
