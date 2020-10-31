@@ -37,7 +37,7 @@ namespace trees
         void _rightRotate(Node* oldRoot);
 
         // zig/zigzag/zigzig movements
-        void _Splay(Node* newRoot);
+        void _splay(Node* newRoot);
 
     public:
         SplayTree() : root(nullptr) { }
@@ -116,11 +116,11 @@ namespace trees
     template <typename T>
     void SplayTree<T>::_leftRotate(Node* oldRoot)
     {
-        auto newRoot = old->right;
-        old->right = newRoot->left;
-        if (old->right != nullptr)
+        auto newRoot = oldRoot->right;
+        oldRoot->right = newRoot->left;
+        if (oldRoot->right != nullptr)
         {
-            old->right->parent = old;
+            oldRoot->right->parent = oldRoot;
         }
 
         _rebinding(oldRoot, newRoot);
@@ -131,16 +131,58 @@ namespace trees
     template <typename T>
     void SplayTree<T>::_rightRotate(Node* oldRoot)
     {
-        auto newRoot = old->left;
-        old->left = newRoot->right;
-        if (old->left != nullptr)
+        auto newRoot = oldRoot->left;
+        oldRoot->left = newRoot->right;
+        if (oldRoot->left != nullptr)
         {
-            old->left->parent = old;
+            oldRoot->left->parent = oldRoot;
         }
 
         _rebinding(oldRoot, newRoot);
         newRoot->right = oldRoot;
         newRoot->right->parent = newRoot;
+    }
+
+    template <typename T>
+    void SplayTree<T>::_splay(Node* newRoot)
+    {
+        while(newRoot != root)
+        {   
+            // Zig step (if new root is child of the root)
+            if (newRoot == root->left)
+            {
+                _rightRotate(root);
+            }
+            else if (newRoot == root->right)
+            {
+                _leftRotate(root);
+            }
+            else
+            {
+                // Zig-zig step (from one side)
+                if (newRoot == newRoot->parent->left && newRoot->parent == newRoot->parent->parent->left)
+                {
+                    _rightRotate(newRoot->parent->parent);
+                    _rightRotate(newRoot->parent);
+                }
+                else if (newRoot == newRoot->parent->right && newRoot->parent == newRoot->parent->parent->right)
+                {
+                    _leftRotate(newRoot->parent->parent);
+                    _leftRotate(newRoot->parent);
+                }
+                // Zig-zag step (from different sides)
+                else if (newRoot == newRoot->parent->left && newRoot->parent == newRoot->parent->parent->right)
+                {
+                    _rightRotate(newRoot->parent);
+                    _leftRotate(newRoot->parent);
+                }
+                else
+                {
+                    _leftRotate(newRoot->parent);
+                    _rightRotate(newRoot->parent);
+                }
+            }
+        }
     }
 
     template <typename T>
@@ -189,12 +231,20 @@ namespace trees
         {
             parentOfNewElem->left = elemToInsert;
         }
+
+        _splay(elemToInsert);
     }
 
     template <typename T>
     bool SplayTree<T>::find(const T& value)
     {
-        return _find(value) != nullptr;
+        auto node = _find(value);
+        if (node != nullptr)
+        {
+            _splay(node);
+            return true;
+        }
+        return false;
     }
 
     template <typename T>
@@ -238,6 +288,8 @@ namespace trees
         _rebinding(elementToRemove, minimum);
         minimum->left = elementToRemove->left;
         minimum->left->parent = minimum;
+
+        _splay(minimum);
     }
     
     template <typename T>
