@@ -195,4 +195,31 @@ TEST(TestTree, SplayUnit)
     EXPECT_EQ(tree.getRoot()->right->right->right->key, 8);
 }
 
+TEST(TestTree, UpperBoundUnit)
+{
+    trees::SplayTree<int> tree{};
+
+    // Insert values
+    tree.insert(2);
+    tree.insert(8);
+    tree.insert(7);
+    tree.insert(-1);
+    tree.insert(-12);
+    tree.insert(5);
+    
+    // Tree check
+    EXPECT_EQ(tree.getRoot()->key, 5);
+    EXPECT_EQ(tree.getRoot()->left->key, -1);
+    EXPECT_EQ(tree.getRoot()->left->right->key, 2);
+    EXPECT_EQ(tree.getRoot()->left->left->key, -12);
+    EXPECT_EQ(tree.getRoot()->right->key, 7);
+    EXPECT_EQ(tree.getRoot()->right->right->key, 8);
+    
+    EXPECT_EQ(tree.upperBound(4)->key, 5);
+    EXPECT_EQ(tree.upperBound(5)->key, 5);
+    EXPECT_EQ(tree.upperBound(0)->key, 2);
+    EXPECT_EQ(tree.upperBound(-11)->key, -1);
+    EXPECT_EQ(tree.upperBound(9), nullptr);
+}
+
 }

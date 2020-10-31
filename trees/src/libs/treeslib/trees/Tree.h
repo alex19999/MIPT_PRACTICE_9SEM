@@ -39,6 +39,8 @@ namespace trees
         // zig/zigzag/zigzig movements
         void _splay(Node* newRoot);
 
+        Node* _next(Node* current);
+
     public:
         SplayTree() : root(nullptr) { }
         ~SplayTree() { _flush(root); }
@@ -46,6 +48,8 @@ namespace trees
         void insert(const T& value);
         bool find(const T& value);
         void remove(const T& value);
+
+        Node* upperBound(const T& value);
 
         Node* getRoot() const { return root; }
 
@@ -186,6 +190,28 @@ namespace trees
     }
 
     template <typename T>
+    typename SplayTree<T>::Node* SplayTree<T>::_next(Node* current)
+    {
+        Node* next = current;
+        if (current->right != nullptr)
+        {
+            next = current->right;
+            while(next->left != nullptr)
+            {
+                next = next->left;
+            }
+            return next;
+        }
+        
+        while(next->parent != nullptr && next != next->parent->left)
+        {
+            next = next->parent;
+        }
+
+        return next->parent;
+    }
+
+    template <typename T>
     void SplayTree<T>::insert(const T& value)
     {
         if (root == nullptr)
@@ -290,6 +316,28 @@ namespace trees
         minimum->left->parent = minimum;
 
         _splay(minimum);
+    }
+
+    template <typename T>
+    typename SplayTree<T>::Node* SplayTree<T>::upperBound(const T& value)
+    {
+        Node* upperBound = root;
+        Node* parent = nullptr;
+        while(upperBound != nullptr)
+        {
+            parent = upperBound;
+            if (upperBound->key == value)
+            {
+                return upperBound;
+            }
+            upperBound = upperBound->key < value ? upperBound->right : upperBound->left;
+        }
+        if (parent->key > value)
+        {
+            return parent;
+        }
+
+        return _next(parent);
     }
     
     template <typename T>
