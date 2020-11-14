@@ -2,6 +2,7 @@
 #define TREE_H
 
 #include <string>
+#include <stdexcept>
 
 namespace trees
 {   
@@ -56,7 +57,7 @@ namespace trees
         size_t rangeQuery(const T& lower, const T& upper) const;
 
         // For validation
-        std::string print(Node* from = nullptr, std::string& result = std::string(""));
+        void print(Node* from, std::string& result);
     };
 
 
@@ -371,11 +372,11 @@ namespace trees
     }
     
     template <typename T>
-    std::string SplayTree<T>::print(Node* from, std::string& result)
+    void SplayTree<T>::print(Node* from, std::string& result)
     {
         if (from == nullptr)
         {
-            return result;
+            return;
         }
         if (from->left != nullptr)
         {
@@ -388,8 +389,6 @@ namespace trees
         {
             print(from->right, result);
         }
-        
-        return result;
     }
     
 }

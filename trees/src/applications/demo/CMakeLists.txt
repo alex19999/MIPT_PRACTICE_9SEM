@@ -11,7 +11,7 @@ file(GLOB TreesDemo_sources_tests_h ./*.h)
 list(APPEND TreesDemo_sources ${TreesDemo_sources_tests})
 list(APPEND TreesDemo_sources ${TreesDemo_sources_tests_h})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/Treeslib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/treeslib)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../thirdParty)
 
 if(MSVC)

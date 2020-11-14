@@ -20,8 +20,8 @@ TEST(TestTree, InsertUnit)
     // Repeat
     tree.insert(0);
     tree.insert(-10);
-
-    const auto result = tree.print(tree.getRoot());
+    std::string result { "" };
+    tree.print(tree.getRoot(), result);
     EXPECT_EQ(result, std::string(" -10 -3 -1 0 2 3 5"));
 }
 
@@ -58,7 +58,8 @@ TEST(TestTree, RemoveLeafUnit)
 
     tree.remove(-10);
     
-    const auto result = tree.print(tree.getRoot());
+    std::string result { "" };
+    tree.print(tree.getRoot(), result);
     EXPECT_EQ(result, std::string(" -12 -1 2 5 7 8"));
 }
 
@@ -76,7 +77,8 @@ TEST(TestTree, RemoveNonLeafUnit)
     tree.insert(-10);
 
     tree.remove(-12);
-    const auto result = tree.print(tree.getRoot());
+    std::string result { "" };
+    tree.print(tree.getRoot(), result);
     EXPECT_EQ(result, std::string(" -10 -1 2 5 7 8"));
 }
 
@@ -94,7 +96,8 @@ TEST(TestTree, RemoveRootUnit)
     tree.insert(-10);
 
     tree.remove(2);
-    const auto result = tree.print(tree.getRoot());
+    std::string result { "" };
+    tree.print(tree.getRoot(), result);
     EXPECT_EQ(result, std::string(" -12 -10 -1 5 7 8"));
 }
 
@@ -112,7 +115,8 @@ TEST(TestTree, NoRemoveUnit)
     tree.insert(-10);
 
     tree.remove(21);
-    const auto result = tree.print(tree.getRoot());
+    std::string result { "" };
+    tree.print(tree.getRoot(), result);
     EXPECT_EQ(result, std::string(" -12 -10 -1 2 5 7 8"));
 }
 

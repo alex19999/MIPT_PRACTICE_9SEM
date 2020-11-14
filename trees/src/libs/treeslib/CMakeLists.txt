@@ -5,8 +5,8 @@ project(TreesLib)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
-file(GLOB_RECURSE Trees_sources_main_cpp Trees/*.cpp)
-file(GLOB_RECURSE Trees_sources_main_h Trees/*.h)
+file(GLOB_RECURSE Trees_sources_main_cpp trees/*.cpp)
+file(GLOB_RECURSE Trees_sources_main_h trees/*.h)
 
 list(APPEND Trees_sources ${Trees_sources_main_cpp})
 list(APPEND Trees_sources ${Trees_sources_main_h})
