@@ -48,3 +48,6 @@ if(WIN32)
 else()
   install(TARGETS TreesLib DESTINATION ${CMAKE_INSTALL_PREFIX})
 endif()
+
+set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+set(CMAKE_CXX_FLAGS_DEBUG "-O2")

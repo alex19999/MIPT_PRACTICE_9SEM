@@ -20,3 +20,6 @@ endif()
 if(TREES_BUILD_DEMO)
   add_subdirectory(src/applications/demo)
 endif()
+
+set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+set(CMAKE_CXX_FLAGS_DEBUG "-O2")

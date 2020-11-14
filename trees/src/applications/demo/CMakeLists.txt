@@ -38,3 +38,6 @@ target_compile_options(TreesDemo PRIVATE ${TREES_CXX_FLAGS})
 target_link_libraries(TreesDemo TreesLib)
 
 install(TARGETS TreesDemo DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+set(CMAKE_CXX_FLAGS_DEBUG "-O2")
