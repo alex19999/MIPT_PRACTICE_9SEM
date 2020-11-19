@@ -5,6 +5,7 @@
 #include <numeric>
 #include <iostream>
 #include <array>
+#include <cmath>
 
 namespace triangles
 {

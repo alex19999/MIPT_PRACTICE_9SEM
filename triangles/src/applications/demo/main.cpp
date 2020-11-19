@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
         triangles.push_back(triangles::Triangle<3> { points[0], points[1], points[2] }); 
     }
 
-    size_t numOfIntersections= 0;
+    size_t numOfIntersections = 0;
     for (size_t i = 0; i < triangles.size(); ++i)
     {
         for (size_t j = i + 1; j < triangles.size(); ++j)
@@ -38,5 +38,5 @@ int main(int argc, char* argv[])
             numOfIntersections += static_cast<size_t>(haveIntersection(triangles[i], triangles[j]));
         }
     }
-    std::cout << "Number of unique intersections = " << numOfIntersected << std::endl;
+    std::cout << "Number of unique intersections = " << numOfIntersections << std::endl;
 }

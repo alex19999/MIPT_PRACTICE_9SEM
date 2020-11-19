@@ -11,7 +11,7 @@ file(GLOB TrianglesDemo_sources_tests_h ./*.h)
 list(APPEND TrianglesDemo_sources ${TrianglesDemo_sources_tests})
 list(APPEND TrianglesDemo_sources ${TrianglesDemo_sources_tests_h})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/Triangleslib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/triangleslib)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../thirdParty)
 
 if(MSVC)
