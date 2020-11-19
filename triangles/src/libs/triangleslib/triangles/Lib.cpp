@@ -1,5 +1,7 @@
 #include "Lib.h"
 
+#include <algorithm>
+
 namespace
 {
     bool checkAllZeroes(std::array<float, 3> pointsToCheck)
@@ -43,6 +45,39 @@ namespace
             }
         }
         return point;
+    }
+
+    std::pair<float, float> getInterval(const std::array<float, 3>& projections, const std::array<float, 3>& distances)
+    {
+        // 2 points on plane
+        if (distances[0] == 0.0 && distances[1] == 0.0)
+        {
+            return std::make_pair(std::min(projections[0], projections[1]), std::max(projections[0], projections[1]));
+        }
+        if (distances[1] == 0.0 && distances[2] == 0.0)
+        {
+            return std::make_pair(std::min(projections[1], projections[2]), std::max(projections[1], projections[2]));
+        }
+        if (distances[2] == 0.0 && distances[0] == 0.0)
+        {
+            return std::make_pair(std::min(projections[2], projections[0]), std::max(projections[2], projections[0]));
+        }
+
+        // 1 point on plane and line itself
+        if (distances[0] == 0.0 && distances[2] * distances[1] > 0.0)
+        {
+            return std::make_pair(projections[0], projections[0]);
+        }
+        if (distances[1] == 0.0 && distances[0] * distances[2] > 0.0)
+        {
+            return std::make_pair(projections[1], projections[1]);
+        }
+        if (distances[2] == 0.0 && distances[0] * distances[1] > 0.0)
+        {
+            return std::make_pair(projections[2], projections[2]);
+        }
+
+        return std::make_pair(getPoint(projections[0], projections[1], distances[0], distances[1]), getPoint(projections[1], projections[2], distances[1], distances[2]));
     }
 }
 
@@ -148,7 +183,7 @@ namespace triangles
             return false;
         }
 
-        // Check that all zeroes
+        // Check that all zeroes;
         if (checkAllZeroes(lhsDistancesToRhs))
         {
             if (!checkAllZeroes(rhsDistancesToLhs))
@@ -175,56 +210,26 @@ namespace triangles
         // 3D part
         // Find intersection line L = O + tD, wher D = N1 * N2, O - some point on L
         const auto D = getPlane(lhs).getNormal() * getPlane(rhs).getNormal();
-        
+
         // Project vertices of first triangle to L
         const auto p11 = dotProduct(D, Vector<3>(lhs.getVertices()[0]));
         const auto p12 = dotProduct(D, Vector<3>(lhs.getVertices()[1]));
         const auto p13 = dotProduct(D, Vector<3>(lhs.getVertices()[2]));
 
-    
-        std::array<float, 2> intervalT1;
-        size_t index = 0;
-        if (lhsDistancesToRhs[0] * lhsDistancesToRhs[1] < 0)
-        {
-            intervalT1[index] = getPoint(p11, p12, lhsDistancesToRhs[0], lhsDistancesToRhs[1]);
-            index += 1;
-        }
-        if (lhsDistancesToRhs[0] * lhsDistancesToRhs[2] < 0)
-        {
-            intervalT1[index] = getPoint(p11, p13, lhsDistancesToRhs[0], lhsDistancesToRhs[2]);
-            index += 1;
-        }
-        if (lhsDistancesToRhs[1] * lhsDistancesToRhs[2] < 0)
-        {
-            intervalT1[index] = getPoint(p12, p13, lhsDistancesToRhs[1], lhsDistancesToRhs[2]);
-        }
+        const std::pair<float, float> intervalT1 = getInterval(std::array<float, 3>{ p11, p12, p13 }, lhsDistancesToRhs);
 
         // Project vertices of second triangle to L
         const auto p21 = dotProduct(D, Vector(rhs.getVertices()[0]));
         const auto p22 = dotProduct(D, Vector(rhs.getVertices()[1]));
         const auto p23 = dotProduct(D, Vector(rhs.getVertices()[2]));
         
-        std::array<float, 2> intervalT2;
-        index = 0;
-        if (rhsDistancesToLhs[0] * rhsDistancesToLhs[1] <= 0)
-        {
-            intervalT2[index] = getPoint(p21, p22, rhsDistancesToLhs[0], rhsDistancesToLhs[1]);
-            index += 1;
-        }
-        if (rhsDistancesToLhs[0] * rhsDistancesToLhs[2] <= 0)
-        {
-            intervalT2[index] = getPoint(p21, p23, rhsDistancesToLhs[0], rhsDistancesToLhs[2]);
-            index += 1;
-        }
-        if (rhsDistancesToLhs[1] * rhsDistancesToLhs[2] <= 0)
-        {
-            intervalT2[index] = getPoint(p22, p23, rhsDistancesToLhs[1], rhsDistancesToLhs[2]);
-        }
-        if (std::max(intervalT1[0], intervalT1[1]) < std::min(intervalT2[0], intervalT2[1]))
+        const std::pair<float, float> intervalT2 = getInterval(std::array<float, 3>{ p21, p22, p23 }, rhsDistancesToLhs);
+
+        if (std::max(intervalT1.first, intervalT1.second) < std::min(intervalT2.first, intervalT2.second))
         {
             return false;
         }
-        if (std::min(intervalT1[0], intervalT1[1]) > std::max(intervalT2[0], intervalT2[1]))
+        if (std::min(intervalT1.first, intervalT1.second) > std::max(intervalT2.first, intervalT2.second))
         {
             return false;
         }

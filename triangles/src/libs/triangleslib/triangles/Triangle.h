@@ -38,13 +38,6 @@ namespace triangles
     : vertices(std::array<Point<Dim>, 3> { vert1, vert2, vert3 })
     , edges(std::array<Edge<Dim>, 3> { Edge<Dim>(vert2, vert1), Edge<Dim>(vert3, vert2), Edge<Dim>(vert1, vert3) })
     {
-        // Check lengthes of edges
-        /*if (getDistance(vert1, vert2) + getDistance(vert1, vert3) <= getDistance(vert2, vert3) 
-            || getDistance(vert1, vert2) + getDistance(vert2, vert3) <= getDistance(vert3, vert1)
-            || getDistance(vert3, vert1) + getDistance(vert2, vert3) <= getDistance(vert1, vert2))
-        {
-            throw std::runtime_error("Cannot build triangle on these points: incorrect lengthes");
-        }*/
     }
 
     template <size_t Dim>

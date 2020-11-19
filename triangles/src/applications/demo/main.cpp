@@ -2,6 +2,7 @@
 #include <string>
 
 #include <triangles/Lib.h>
+#include <set>
 
 int main(int argc, char* argv[])
 {
@@ -27,16 +28,28 @@ int main(int argc, char* argv[])
             std::cin >> z;
             points.push_back(triangles::Point<3>{ std::array{ x, y, z} });
         }
-        triangles.push_back(triangles::Triangle<3> { points[0], points[1], points[2] }); 
+        // Do not consider degenerative triangles
+        if (triangles::Triangle<3> { points[0], points[1], points[2] }.square() != 0.0)
+        {
+            triangles.push_back(triangles::Triangle<3> { points[0], points[1], points[2] }); 
+        }
     }
-
-    size_t numOfIntersections = 0;
+    std::set<size_t> intersected;
     for (size_t i = 0; i < triangles.size(); ++i)
     {
         for (size_t j = i + 1; j < triangles.size(); ++j)
         {
-            numOfIntersections += static_cast<size_t>(haveIntersection(triangles[i], triangles[j]));
+            if (haveIntersection(triangles[i], triangles[j]))
+            {
+                intersected.insert(i);
+                intersected.insert(j);
+            }
         }
     }
-    std::cout << "Number of unique intersections = " << numOfIntersections << std::endl;
+    
+    // output
+    for (auto& num : intersected)
+    {
+        std::cout << num << std::endl;
+    }
 }
