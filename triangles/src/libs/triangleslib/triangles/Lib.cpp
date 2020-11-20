@@ -49,35 +49,21 @@ namespace
 
     std::pair<float, float> getInterval(const std::array<float, 3>& projections, const std::array<float, 3>& distances)
     {
-        // 2 points on plane
-        if (distances[0] == 0.0 && distances[1] == 0.0)
-        {
-            return std::make_pair(std::min(projections[0], projections[1]), std::max(projections[0], projections[1]));
-        }
-        if (distances[1] == 0.0 && distances[2] == 0.0)
-        {
-            return std::make_pair(std::min(projections[1], projections[2]), std::max(projections[1], projections[2]));
-        }
-        if (distances[2] == 0.0 && distances[0] == 0.0)
-        {
-            return std::make_pair(std::min(projections[2], projections[0]), std::max(projections[2], projections[0]));
-        }
-
-        // 1 point on plane and line itself
-        if (distances[0] == 0.0 && distances[2] * distances[1] > 0.0)
-        {
-            return std::make_pair(projections[0], projections[0]);
-        }
-        if (distances[1] == 0.0 && distances[0] * distances[2] > 0.0)
-        {
-            return std::make_pair(projections[1], projections[1]);
-        }
-        if (distances[2] == 0.0 && distances[0] * distances[1] > 0.0)
-        {
-            return std::make_pair(projections[2], projections[2]);
-        }
-
         return std::make_pair(getPoint(projections[0], projections[1], distances[0], distances[1]), getPoint(projections[1], projections[2], distances[1], distances[2]));
+    }
+
+    bool isOnPlainIntersection(const triangles::Triangle<3>& lhs, const triangles::Point<3>& someRhsPoint)
+    {
+       // Find redundant axis
+       size_t axisToRemove = 0;
+       for (axisToRemove = axisToRemove; axisToRemove < 3; ++axisToRemove)
+       {
+           if (someRhsPoint[axisToRemove] == lhs.getVertices()[0][axisToRemove])
+           {
+               break;
+           }
+       }
+       return false;
     }
 }
 
@@ -139,6 +125,20 @@ namespace triangles
         }
 
         return true;
+    }
+
+    bool isOnPlainIntersection(const Triangle<3>& lhs, const Point<3>& someRhsPoint)
+    {
+       // Find redundant axis
+       size_t axisToRemove = 0;
+       for (axisToRemove = axisToRemove; axisToRemove < 3; ++axisToRemove)
+       {
+           if (someRhsPoint[axisToRemove] == lhs.getVertices()[0][axisToRemove])
+           {
+               break;
+           }
+       }
+       return isNested(lhs.project(axisToRemove), someRhsPoint.deleteAxis(axisToRemove));
     }
 
     bool haveIntersection(const Triangle<2>& lhs, const Triangle<2>& rhs)
@@ -215,14 +215,14 @@ namespace triangles
         const auto p11 = dotProduct(D, Vector<3>(lhs.getVertices()[0]));
         const auto p12 = dotProduct(D, Vector<3>(lhs.getVertices()[1]));
         const auto p13 = dotProduct(D, Vector<3>(lhs.getVertices()[2]));
-
+        
         const std::pair<float, float> intervalT1 = getInterval(std::array<float, 3>{ p11, p12, p13 }, lhsDistancesToRhs);
 
         // Project vertices of second triangle to L
         const auto p21 = dotProduct(D, Vector(rhs.getVertices()[0]));
         const auto p22 = dotProduct(D, Vector(rhs.getVertices()[1]));
         const auto p23 = dotProduct(D, Vector(rhs.getVertices()[2]));
-        
+
         const std::pair<float, float> intervalT2 = getInterval(std::array<float, 3>{ p21, p22, p23 }, rhsDistancesToLhs);
 
         if (std::max(intervalT1.first, intervalT1.second) < std::min(intervalT2.first, intervalT2.second))
