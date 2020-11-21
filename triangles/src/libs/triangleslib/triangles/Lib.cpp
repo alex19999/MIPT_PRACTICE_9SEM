@@ -47,9 +47,22 @@ namespace
         return point;
     }
 
+    int sign(float num)
+    {
+        return static_cast<int>((num > 0) - (num < 0));
+    }
+
     std::pair<float, float> getInterval(const std::array<float, 3>& projections, const std::array<float, 3>& distances)
     {
-        return std::make_pair(getPoint(projections[0], projections[1], distances[0], distances[1]), getPoint(projections[1], projections[2], distances[1], distances[2]));
+        if (sign(distances[0]) != sign(distances[1]) && sign(distances[0]) != sign(distances[2]))
+        {
+            return std::make_pair(getPoint(projections[0], projections[1], distances[0], distances[1]), getPoint(projections[0], projections[2], distances[0], distances[2]));
+        }
+        if (sign(distances[1]) != sign(distances[0]) && sign(distances[1]) != sign(distances[2]))
+        {
+            return std::make_pair(getPoint(projections[0], projections[1], distances[0], distances[1]), getPoint(projections[1], projections[2], distances[1], distances[2]));
+        }
+        return std::make_pair(getPoint(projections[0], projections[2], distances[0], distances[2]), getPoint(projections[1], projections[2], distances[1], distances[2]));
     }
 
     bool isOnPlainIntersection(const triangles::Triangle<3>& lhs, const triangles::Point<3>& someRhsPoint)
@@ -224,7 +237,6 @@ namespace triangles
         const auto p23 = dotProduct(D, Vector(rhs.getVertices()[2]));
 
         const std::pair<float, float> intervalT2 = getInterval(std::array<float, 3>{ p21, p22, p23 }, rhsDistancesToLhs);
-
         if (std::max(intervalT1.first, intervalT1.second) < std::min(intervalT2.first, intervalT2.second))
         {
             return false;
