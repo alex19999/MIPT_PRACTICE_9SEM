@@ -2,6 +2,7 @@
 #define MATRIX_H
 
 #include <iostream>
+#include <numeric>
 
 namespace matrix
 {
@@ -102,8 +103,16 @@ namespace matrix
 
         // Trace
         T trace() const;
-    
+
+        // Transpose
         Matrix& transpose() &;
+
+        // Invert matrix
+        //Matrix& invert() &;
+
+        // Determinant calculation and helper
+        std::tuple<Matrix, Matrix, Matrix> LUdecomposition() const;
+        T calcDeterminant() const;
 
         void print(std::ostream& out);
     
@@ -492,6 +501,91 @@ namespace matrix
         *this = std::move(tmp);
         return *this;
     }
+    
+    template <typename T>
+    std::tuple<Matrix<T>, Matrix<T>, Matrix<T>> Matrix<T>::LUdecomposition() const 
+    {
+        if (iRows != iCols)
+        {
+            throw std::runtime_error("Cannot calculate LU decomposition - initial matrix is not square");
+        }
+        Matrix lower { iRows, iCols, FILL_TYPE::ZEROS };
+        Matrix upper { iRows, iCols, FILL_TYPE::ZEROS };
+        Matrix inputCopy{ *this };
+
+        std::vector<size_t> perm(iRows);
+        std::iota(perm.begin(), perm.end(), 0);
+
+        for (size_t j = 0; j < iRows; ++j) 
+        {
+            size_t maxIdx = j;
+            T maxVal = static_cast<T>(0);
+            for (size_t i = j; i < iRows; ++i) 
+            {
+                T value = std::abs(inputCopy.getData()[i][j]);
+                if (value > maxVal) {
+                    maxIdx = i;
+                    maxVal = value;
+                }
+            }
+            if (j != maxIdx)
+            {
+                std::swap(perm[j], perm[maxIdx]);
+            }
+            size_t jj = perm[j];
+            for (size_t i = j + 1; i < iRows; ++i) 
+            {
+                size_t ii = perm[i];
+                inputCopy.getData()[ii][j] /= inputCopy.getData()[jj][j];
+                for (size_t k = j + 1; k < iRows; ++k)
+                {
+                    inputCopy.getData()[ii][k] -= inputCopy.getData()[ii][j] * inputCopy.getData()[jj][k];
+                }
+            }
+        }
+    
+        for (size_t j = 0; j < iRows; ++j) 
+        {
+            lower.getData()[j][j] = 1;
+            for (size_t i = j + 1; i < iRows; ++i)
+            {
+                lower.getData()[i][j] = inputCopy.getData()[perm[i]][j];
+            }
+            for (size_t i = 0; i <= j; ++i)
+            {
+                upper.getData()[i][j] = inputCopy.getData()[perm[i]][j];
+            }
+        }
+
+        Matrix pivot(iRows, iCols, FILL_TYPE::ZEROS);
+        for (size_t i = 0; i < iRows; ++i)
+        {
+            pivot.getData()[i][perm[i]] = static_cast<T>(1);
+        }
+
+        return std::make_tuple(pivot, lower, upper);
+    }
+
+    template <typename T>
+    T Matrix<T>::calcDeterminant() const
+    {
+        if (iRows != iCols)
+        {
+            return static_cast<T>(0);
+        }
+        
+        auto [pivot, lower, upper] = LUdecomposition();
+        T lDet = static_cast<T>(1);
+        T uDet = static_cast<T>(1);
+        for (size_t i = 0; i < iRows; ++i)
+        {
+            lDet *= lower.getData()[i][i];
+            uDet *= upper.getData()[i][i];
+        }
+
+        return lDet * uDet;
+    }
+
 }
 
 #endif 
