@@ -72,70 +72,141 @@ TEST(TestMatrix, EqualUnit)
     EXPECT_FALSE(m1.identical(m3));
 }
 
-TEST(TestMatrix, SumUnit)
+class TestElementWiseOps : public ::testing::Test
 {
-    constexpr size_t cols = 3u;
-    constexpr size_t rows1 = 3u;
-    constexpr size_t rows2 = 5u;
+protected:
+	void SetUp()
+	{
+	}
+	void TearDown()
+	{
+	}
+
+    const size_t cols { 3u };
+    const size_t rows1 { 3u };
+    const size_t rows2 { 5u };
 
     matrix::Matrix<size_t> m1{ cols, rows1, 1u };
     matrix::Matrix<size_t> m2{ cols, rows1, 2u };
     matrix::Matrix<size_t> m3{ cols, rows2, 3u };
+    matrix::Matrix<size_t> m4{ cols, rows1, 0u };
 
+    matrix::Matrix<int> mInt{ cols, rows1, 1 };
+};
+
+TEST_F(TestElementWiseOps, SumUnit)
+{
     EXPECT_THROW(m1 += m3, std::runtime_error);
     
     m1 += m2;
     EXPECT_TRUE(checkEquality(m1, static_cast<size_t>(3)));
 }
 
-TEST(TestMatrix, MinusUnit)
+TEST_F(TestElementWiseOps, MinusUnit)
 {
-    constexpr size_t cols = 3u;
-    constexpr size_t rows1 = 3u;
-    constexpr size_t rows2 = 5u;
-
-    matrix::Matrix<size_t> m1{ cols, rows1, 1u };
-    matrix::Matrix<size_t> m2{ cols, rows1, 2u };
-    matrix::Matrix<size_t> m3{ cols, rows2, 3u };
-
     EXPECT_THROW(m1 -= m3, std::runtime_error);
     
     m2 -= m1;
     EXPECT_TRUE(checkEquality(m2, static_cast<size_t>(1)));
 }
 
-TEST(TestMatrix, MulByValueUnit)
+TEST_F(TestElementWiseOps, MulUnit)
 {
-    constexpr size_t cols = 3u;
-    constexpr size_t rows1 = 3u;
-    constexpr size_t rows2 = 5u;
-
-    matrix::Matrix<int> m1{ cols, rows1, 1 };
+    EXPECT_THROW(m1 *= m3, std::runtime_error);
     
-    m1 *= -5;
-    EXPECT_TRUE(checkEquality(m1, -5));
-
-    m1 *= 3;
-    EXPECT_TRUE(checkEquality(m1, -15));
+    m2 *= m1;
+    EXPECT_TRUE(checkEquality(m2, static_cast<size_t>(2)));
 }
 
-TEST(TestMatrix, NegateUnit)
+TEST_F(TestElementWiseOps, DivisionUnit)
 {
-    constexpr size_t cols = 3u;
-    constexpr size_t rows1 = 3u;
-    constexpr size_t rows2 = 5u;
-
-    matrix::Matrix<int> m1{ cols, rows1, 1 };
+    EXPECT_THROW(m1 /= m3, std::runtime_error);
+    EXPECT_THROW(m1 /= m4, std::runtime_error);
     
-    m1.negate();
-    EXPECT_TRUE(checkEquality(m1, -1));
+    m1 /= m2;
+    EXPECT_TRUE(checkEquality(m1, static_cast<size_t>(0.5)));
+}
 
-    m1.negate();
-    EXPECT_TRUE(checkEquality(m1, 1));
+TEST_F(TestElementWiseOps, MulByValueUnit)
+{
+    mInt *= -5;
+    EXPECT_TRUE(checkEquality(mInt, -5));
 
-    auto m3 = -m1;
+    mInt *= 3;
+    EXPECT_TRUE(checkEquality(mInt, -15));
+}
+
+TEST_F(TestElementWiseOps, NegateUnit)
+{    
+    mInt.negate();
+    EXPECT_TRUE(checkEquality(mInt, -1));
+
+    mInt.negate();
+    EXPECT_TRUE(checkEquality(mInt, 1));
+
+    auto m3 = -mInt;
     EXPECT_TRUE(checkEquality(m3, -1));
 }
+
+TEST(TestMatrix, TraceUnit)
+{
+    constexpr size_t cols = 3u;
+    constexpr size_t rows = 3u;
+
+    matrix::Matrix<size_t> m1{ cols, rows, 1u };
+    matrix::Matrix<size_t> m3 = matrix::Matrix<size_t>::eye(cols, rows);
+
+    EXPECT_EQ(m1.trace(), 3u);
+    EXPECT_EQ(m3.trace(), 3u);
+}
+
+TEST(TestMatrix, MatMulFailUnit)
+{
+    constexpr size_t cols1 = 3u;
+    constexpr size_t rows1 = 5u;
+    constexpr size_t cols2 = 4u;
+    constexpr size_t rows2 = 5u;
+
+    matrix::Matrix<size_t> m1{ cols1, rows2, 1u };
+    matrix::Matrix<size_t> m2{ cols2, rows2, 1u };
+
+    EXPECT_THROW(m1.matMul(m2), std::runtime_error);
+}
+
+TEST(TestMatrix, MatMulSimpleUnit)
+{
+    constexpr size_t cols1 = 2u;
+    constexpr size_t rows1 = 2u;
+    constexpr size_t cols2 = 2u;
+    constexpr size_t rows2 = 2u;
+
+    matrix::Matrix<size_t> m1{ cols1, rows1, 1u };
+    matrix::Matrix<size_t> m2{ cols2, rows2, 1u };
+
+    m1.matMul(m2);
+    EXPECT_TRUE(checkEquality(m1, static_cast<size_t>(2)));
+}
+
+TEST(TestMatrix, MatMulUnit)
+{
+    // see matmul.py
+    constexpr size_t cols1 = 7u;
+    constexpr size_t rows1 = 5u;
+    constexpr size_t cols2 = 9u;
+    constexpr size_t rows2 = 7u;
+
+    matrix::Matrix<size_t> m1{ cols1, rows1, matrix::FILL_TYPE::SEQUENTIAL };
+    matrix::Matrix<size_t> m2{ cols2, rows2, matrix::FILL_TYPE::SEQUENTIAL };
+
+    // Correct result
+    std::vector<size_t> correctFiller{ 819, 840, 861, 882, 903, 924, 945, 966, 987, 2142, 2212, 2282, 2352, 2422, 2492, 2562, 2632, 2702, 3465, 3584, 3703, 3822, 3941,
+        4060, 4179, 4298, 4417, 4788, 4956, 5124, 5292, 5460, 5628, 5796, 5964, 6132, 6111, 6328, 6545, 6762, 6979, 7196, 7413, 7630, 7847 };
+    matrix::Matrix<size_t> correctResult{ cols2, rows1, correctFiller.begin(), correctFiller.end() };
+
+    m1.matMul(m2);
+    EXPECT_TRUE(m1.identical(correctResult));
+}
+
 
 TEST(TestMatrix, TransposeSimpleUnit)
 {
@@ -162,8 +233,7 @@ TEST(TestMatrix, TransposeUnit)
     matrix::Matrix<int> m{ cols, rows, matrix::FILL_TYPE::SEQUENTIAL };
 
     m.transpose();
-    std::cout << m.getData() << std::endl;
-    //EXPECT_TRUE(m.transpose().identical(correctResult));
+    EXPECT_TRUE(m.identical(correctResult));
 }
 
 }

@@ -48,8 +48,8 @@ namespace matrix
         Matrix& operator=(const Matrix& rhs);
 
         // Move c-tor
-        // Matrix(Matrix&& rhs);
-        // Matrix& operator=(Matrix&& rhs);
+        //Matrix(Matrix&& rhs);
+        //Matrix& operator=(Matrix&& rhs);
         
         // Destructor
         ~Matrix();
@@ -87,8 +87,10 @@ namespace matrix
         // Arithmetic operations
         Matrix& operator+=(const Matrix& rhs) &;
         Matrix& operator-=(const Matrix& rhs) &;
+        Matrix& operator*=(const Matrix& rhs) &;
+        Matrix& operator/=(const Matrix& rhs) &;
         Matrix& operator*=(T val) &;
-        Matrix& prod_eq(const Matrix& rhs) &;
+        Matrix& matMul(const Matrix& rhs) &;
 
         // Equality
         bool haveEqualSize(const Matrix& other) const;
@@ -97,6 +99,9 @@ namespace matrix
         // Negative matrix
         Matrix& negate() &;
         Matrix operator-() const;
+
+        // Trace
+        T trace() const;
     
         Matrix& transpose() &;
 
@@ -105,6 +110,7 @@ namespace matrix
     protected:
         void _fillSameValue(T val);
         void _fillSequential();
+        void _elementWiseOp(const Matrix& actor, std::function<T(const T, const T)> op);
 
     private:
         size_t iCols;
@@ -133,6 +139,18 @@ namespace matrix
             for (size_t j = 0; j < iCols; ++j)
             {
                 iData[i][j] = static_cast<T>(i * iCols + j);
+            }
+        }
+    }
+
+    template <typename T>
+    void Matrix<T>::_elementWiseOp(const Matrix& actor, std::function<T(const T, const T)> op)
+    {
+        for (size_t i = 0; i < iRows; ++i)
+        {
+            for (size_t j = 0; j < iCols; ++j)
+            {
+                iData[i][j] = op(iData[i][j], actor.getData()[i][j]);
             }
         }
     }
@@ -238,27 +256,32 @@ namespace matrix
         }
     }
 
+    template <typename T>
+    Matrix<T>& Matrix<T>::operator=(const Matrix& rhs)
+    {
+        this->~Matrix();
+        new (this) Matrix(rhs);
+        return *this;
+    }
+
     /*
     template <typename T>
     Matrix<T>::Matrix(Matrix&& rhs)
     {
-        iCols = std::move(rhs.getColsNum());
         iRows = std::move(rhs.getRowsNum());
+        iCols = std::move(rhs.getColsNum());
         iData = std::move(rhs.getData());
-    }*/
+    }
 
     template <typename T>
-    Matrix<T>& Matrix<T>::operator=(const Matrix& rhs)
+    Matrix<T>& Matrix<T>::operator=(Matrix&& rhs)
+        : Matrix(rhs)
     {
-        Matrix tmp{ rhs };
-        this = &tmp;
-        return *this;
-    }
+    }*/
 
     template <typename T>
     Matrix<T>::~Matrix()
     {
-        std::cout << iData << std::endl;
         for (size_t i = 0; i < iRows; ++i)
         {
             iData[i].deallocateRow();
@@ -299,13 +322,7 @@ namespace matrix
         {
             throw std::runtime_error("Operator +: Matrices should have the same size");
         }
-        for (size_t i = 0; i < iRows; ++i)
-        {
-            for (size_t j = 0; j < iCols; ++j)
-            {
-                iData[i][j] += rhs.getData()[i][j];
-            }
-        }
+        _elementWiseOp(rhs, [](const T x, const T y) { return x + y; });
         return *this;
     }
 
@@ -316,14 +333,80 @@ namespace matrix
         {
             throw std::runtime_error("Operator +: Matrices should have the same size");
         }
+
+        _elementWiseOp(rhs, [](const T x, const T y) { return x - y; });
+        return *this;
+    }
+
+    template <typename T>
+    Matrix<T>& Matrix<T>::operator*=(const Matrix& rhs) &
+    {
+        if (!haveEqualSize(rhs))
+        {
+            throw std::runtime_error("Operator +: Matrices should have the same size");
+        }
+        
+        _elementWiseOp(rhs, [](const T x, const T y) { return x * y; });
+        return *this;
+    }
+
+    template <typename T>
+    Matrix<T>& Matrix<T>::operator/=(const Matrix& rhs) &
+    {
+        if (!haveEqualSize(rhs))
+        {
+            throw std::runtime_error("Operator +: Matrices should have the same size");
+        }
         for (size_t i = 0; i < iRows; ++i)
         {
             for (size_t j = 0; j < iCols; ++j)
             {
-                iData[i][j] -= rhs.getData()[i][j];
+                if (rhs.getData()[i][j] == static_cast<T>(0))
+                {
+                    throw std::runtime_error("Division by zero");
+                }
+                iData[i][j] /= rhs.getData()[i][j];
             }
         }
         return *this;
+    }
+
+    template <typename T>
+    bool operator==(const Matrix<T> &lhs, const Matrix<T> &rhs)
+    {
+        return lhs.identical(rhs);
+    }
+
+    template <typename T>
+    Matrix<T> operator+(const Matrix<T> &lhs, const Matrix<T> &rhs)
+    {
+        Matrix tmp{ lhs };
+        tmp += rhs;
+        return tmp;
+    }
+
+    template <typename T>
+    Matrix<T> operator-(const Matrix<T> &lhs, const Matrix<T> &rhs)
+    {
+        Matrix tmp{ lhs };
+        tmp -= rhs;
+        return tmp;
+    }
+
+    template <typename T>
+    Matrix<T> operator*(const Matrix<T> &lhs, const Matrix<T> &rhs)
+    {
+        Matrix tmp{ lhs };
+        tmp *= rhs;
+        return tmp;
+    }
+
+    template <typename T>
+    Matrix<T> operator/(const Matrix<T> &lhs, const Matrix<T> &rhs)
+    {
+        Matrix tmp{ lhs };
+        tmp /= rhs;
+        return tmp;
     }
 
     template <typename T>
@@ -340,6 +423,14 @@ namespace matrix
     }
 
     template <typename T>
+    Matrix<T> operator*(const Matrix<T> &lhs, T n)
+    {
+        Matrix tmp {lhs};
+        tmp *= n;
+        return tmp; 
+    }
+
+    template <typename T>
     Matrix<T>& Matrix<T>::negate() &
     {
         *this *= static_cast<T>(-1);
@@ -353,6 +444,39 @@ namespace matrix
         return tmp.negate(); 
     }
     
+    template <typename T>
+    T Matrix<T>::trace() const
+    {
+        T trace = static_cast<T>(0);
+        for (size_t i = 0; i < iRows; ++i)
+        {
+            trace += iData[i][i];
+        }
+        return trace;
+    }
+    
+    template <typename T>
+    Matrix<T>& Matrix<T>::matMul(const Matrix<T>& rhs) &
+    {
+        if (iCols != rhs.getRowsNum())
+        {
+            throw std::runtime_error("Matmul: incorrect matrices sizes");
+        }
+
+        Matrix tmp{ rhs.getColsNum(), iRows, FILL_TYPE::ZEROS};
+        for(size_t i = 0; i < iRows; ++i)
+        {
+            for(size_t j = 0; j < rhs.getColsNum(); ++j)
+            {
+                for(size_t k = 0; k < iCols; ++k)
+                {
+                    tmp[i][j] += iData[i][k] * rhs.getData()[k][j];
+                }
+            }
+        }
+        *this = std::move(tmp);
+        return *this;
+    }
     
     template <typename T>
     Matrix<T>& Matrix<T>::transpose() &
@@ -365,17 +489,7 @@ namespace matrix
                 tmp.getData()[j][i] = iData[i][j];
             }
         }
-        std::cout << "after\n";
-        // Data swap
-        std::cout << iData << " " << tmp.getData() << std::endl;
-        auto tempAddr = iData;
-        setDataPtr(tmp.getData());
-        iData = std::move(tmp.getData());
-        tmp.setDataPtr(tempAddr);
-        std::cout << iData << " " << tmp.getData() << std::endl;
-        std::swap(iCols, iRows);
-        print(std::cout);
-        std::cout << this->iData << std::endl;
+        *this = std::move(tmp);
         return *this;
     }
 }
