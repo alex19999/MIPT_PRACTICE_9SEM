@@ -47,7 +47,7 @@ endif()
 link_directories(${Matrix_LINKER_LIBS})
 
 add_executable(MatrixTests ${MatrixTests_sources})
-target_compile_options(MatrixTests PRIVATE ${TREES_CXX_FLAGS} ${TREES_LINK_FLAGS})
+target_compile_options(MatrixTests PRIVATE ${MATRIX_CXX_FLAGS} ${MATRIX_LINK_FLAGS})
 
 if(NOT WIN32)
   target_link_libraries(MatrixTests stdc++fs)

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <numeric>
+#include <functional>
 
 namespace matrix
 {
