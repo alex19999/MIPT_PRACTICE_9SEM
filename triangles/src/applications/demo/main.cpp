@@ -9,6 +9,7 @@ int main(int argc, char* argv[])
     size_t trianglesNumber;
     constexpr size_t pointsNumber = 3;
     std::vector<triangles::Triangle<3>> triangles;
+    std::vector<size_t> trianglesNum;
     
     std::cout << "Enter number of 3D triangles" << std::endl;
     std::cin >> trianglesNumber;
@@ -31,7 +32,8 @@ int main(int argc, char* argv[])
         // Do not consider degenerative triangles
         if (triangles::Triangle<3> { points[0], points[1], points[2] }.square() != 0.0)
         {
-            triangles.push_back(triangles::Triangle<3> { points[0], points[1], points[2] }); 
+            triangles.push_back(triangles::Triangle<3> { points[0], points[1], points[2] });
+            trianglesNum.push_back(i); 
         }
     }
     std::set<size_t> intersected;
@@ -41,8 +43,8 @@ int main(int argc, char* argv[])
         {
             if (haveIntersection(triangles[i], triangles[j]))
             {
-                intersected.insert(i);
-                intersected.insert(j);
+                intersected.insert(trianglesNum[i]);
+                intersected.insert(trianglesNum[j]);
             }
         }
     }
