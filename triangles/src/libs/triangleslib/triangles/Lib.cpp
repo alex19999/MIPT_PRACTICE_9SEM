@@ -7,14 +7,7 @@ namespace
     bool checkAllZeroes(std::array<float, 3> pointsToCheck)
     {
         constexpr float eps = 1.0e-6f;
-        for (size_t i = 0; i < 3; ++i)
-        {
-            if (std::abs(pointsToCheck[i]) > eps)
-            {
-                return false;
-            }
-        }
-        return true;
+        return !std::any_of(pointsToCheck.begin(), pointsToCheck.end(), [](const auto& p) { return std::abs(p) > 1.0e-6f; });
     }
 
     float getPoint(float p1, float p2, float d1, float d2)
